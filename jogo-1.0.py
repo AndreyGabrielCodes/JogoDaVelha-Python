@@ -44,8 +44,7 @@ def jogador_turno_atual():
         coluna = 0
         linha = int(input(f'{jog_ult_jogada}, escolha uma linha: '))
         coluna = int(input(f'{jog_ult_jogada}, escolha uma coluna: '))
-        repete_escolha = verifica_pos_val(linha, coluna)
-    atribui_posicao(linha, coluna)
+        repete_escolha = posicao_valida(linha, coluna)
 
 #cadastro de posicoes
 lista_todas_posicoes = [{'ocupada':0,'simbolo':'','linha':1,'coluna':1}, 
