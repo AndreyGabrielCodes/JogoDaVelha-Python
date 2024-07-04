@@ -1,8 +1,11 @@
 def turno_computador():
     print
 
-def pontos_partida():
-    print
+def reseta_posicoes():
+    for posicao in lista_todas_posicoes:
+        if (posicao['ocupada'] == 1):
+            posicao['ocupada'] = 0
+            posicao['simbolo'] = ' '
 
 def status_partida():
     todas_posicoes_ocupadas = 0
@@ -221,6 +224,17 @@ def menu():
     menu = f"""|{posicao1_1}|{posicao1_2}|{posicao1_3}|\n|{posicao2_1}|{posicao2_2}|{posicao2_3}|\n|{posicao3_1}|{posicao3_2}|{posicao3_3}|\n"""
     print(menu)
 
+def jogador_inicio_partida():
+    #aleatoriza o jogador que inicia a partida
+    global jog_ult_jogada
+    global simbolo_ult_jog
+    jogadores = []
+    simbolos_jogadores = []
+    jogadores = [jogador_x[1],jogador_o[1]]
+    simbolos_jogadores = [jogador_x[2],jogador_o[2]]
+    aleatorio = random.randint(0,1)
+    jog_ult_jogada = jogadores[aleatorio]
+    simbolo_ult_jog = simbolos_jogadores[aleatorio]
 
 #cadastro de posicoes
 lista_todas_posicoes = [{'ocupada':0,'simbolo':' ','linha':1,'coluna':1}, 
@@ -238,33 +252,53 @@ jogador_x = [0,'','X',0] #pontuação, nome, simbolo, vitoria (0 e 1)
 jogador_o = [0,'','O',0]
 
 #controles globais de jogada
-jog_ult_jogada = jogador_o[1] #jogador 01 como inicial
-simbolo_ult_jog = jogador_o[2]
+jog_ult_jogada = ''
+simbolo_ult_jog = ''
 
 from os import system
+import random
 
 #programa principal
 system('cls')
-jogador_x[1] = input('Nome do Jogador que será o X: ')
-jogador_o[1] = input('Nome do Jogador que será o O: ')
+print('|      JOGO DA VELHA       |')
+print('|                          |')
+print('|       MODO DE JOGO       |')
+print('| 1 - Jogador x Jogador    |')
+print('| 2 - Jogador x Computador |')
+modo = int(input('Escolha um modo de jogo:'))
+if(modo == 1):
+    print('')
+    jogador_x[1] = input('| Nome do Jogador que será o X: ')
+    jogador_o[1] = input('| Nome do Jogador que será o O: ')
+else:
+    print('Ainda não configurado!')
 print('')
 print(f'{jogador_x[1]} inicia a partida!')
-print('')
-input('Enter para iniciar')
 
-while(status_partida() == 0): #repetirá enquanto a partida estiver com status de jogo acontecendo
+while(True):
     system('cls')
-    menu()
-    jogador_turno_atual()
-
-resultado = ''
-system('cls')
-if((jogador_x[3] == 0) and (jogador_o[3] == 0)):
-     resultado = ('Empate! Nenhum jogador ganhou')
-else:
-    if (jogador_x[3] == 1):
-        resultado = (f'Vitoria de {jogador_x[1]} que escolheu {jogador_x[2]}!')
-    elif (jogador_o[3] == 1):
-        resultado = (f'Vitoria de {jogador_o[1]} que escolheu {jogador_o[2]}!')
-
-print(f'Resultado da partida: {resultado}')
+    input('Enter para iniciar partida')
+    jogador_inicio_partida()
+    while(status_partida() == 0): #repetirá enquanto a partida estiver com status de jogo acontecendo
+        system('cls')
+        menu()
+        jogador_turno_atual()
+    resultado = ''
+    system('cls')
+    if((jogador_x[3] == 0) and (jogador_o[3] == 0)):
+        resultado = ('Empate! Nenhum jogador ganhou')
+    else:
+        if (jogador_x[3] == 1):
+            resultado = (f'Vitoria de {jogador_x[1]} que escolheu {jogador_x[2]}!')
+            jogador_x[0] += 1
+        elif (jogador_o[3] == 1):
+            resultado = (f'Vitoria de {jogador_o[1]} que escolheu {jogador_o[2]}!')
+            jogador_o[0] += 1
+    print(f'Resultado da partida: {resultado}\n')
+    print(f'Pontuações:\n-{jogador_x[1]}: {jogador_x[0]}\n-{jogador_o[1]}: {jogador_o[0]}')
+    reseta_partida = int(input('Deseja iniciar uma nova partida ? (1/0): '))
+    if(reseta_partida == 1):
+        reseta_posicoes()
+        continue
+    else:
+        break
