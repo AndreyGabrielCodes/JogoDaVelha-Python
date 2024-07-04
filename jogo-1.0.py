@@ -11,12 +11,15 @@ def status_partida():
         #status = 1 = empate
         #status = 2 = vitoria
     combinacao_feita = ''
+    posicoes_ocupadas = 0
+    #verifica combinações de vitória possível e retorna status
+        #soma a combinacao_feita a combinação e caso não seja vitória
+        # limpa a variavel e passa para a próxima combinação
     #linha 1
     for posicao in lista_todas_posicoes:
-        if (((posicao['linha'] == 1) and (posicao['ocupada'] == 1) and (posicao['simbolo'] == 'X'))):
-            combinacao_feita += 'X'
-        elif (((posicao['linha'] == 1) and (posicao['ocupada'] == 1) and (posicao['simbolo'] == 'O'))):
-            combinacao_feita += 'O'
+        if (((posicao['linha'] == 1) and (posicao['ocupada'] == 1) and 
+             ((posicao['simbolo'] == 'X') or (posicao['simbolo'] == 'O')))):
+            combinacao_feita += posicao['simbolo']
     if (combinacao_feita == 'XXX'):
         status = 2
         jogador_x[3] = 1
@@ -27,10 +30,9 @@ def status_partida():
         combinacao_feita = ''
     #linha 2
     for posicao in lista_todas_posicoes:
-        if (((posicao['linha'] == 2) and (posicao['ocupada'] == 1) and (posicao['simbolo'] == 'X'))):
-            combinacao_feita += 'X'
-        elif (((posicao['linha'] == 2) and (posicao['ocupada'] == 1) and (posicao['simbolo'] == 'O'))):
-            combinacao_feita += 'O'
+        if (((posicao['linha'] == 2) and (posicao['ocupada'] == 1) and 
+             ((posicao['simbolo'] == 'X') or (posicao['simbolo'] == 'O')))):
+            combinacao_feita += posicao['simbolo']
     if (combinacao_feita == 'XXX'):
         status = 2
         jogador_x[3] = 1
@@ -40,6 +42,103 @@ def status_partida():
     else:
         combinacao_feita = ''
     #linha 3
+    for posicao in lista_todas_posicoes:
+        if (((posicao['linha'] == 3) and (posicao['ocupada'] == 1) and 
+             ((posicao['simbolo'] == 'X') or (posicao['simbolo'] == 'O')))):
+            combinacao_feita += posicao['simbolo']
+    if (combinacao_feita == 'XXX'):
+        status = 2
+        jogador_x[3] = 1
+    elif (combinacao_feita == 'OOO'):
+        status = 2
+        jogador_o[3] = 1
+    else:
+        combinacao_feita = ''
+    #vertical 1
+    for posicao in lista_todas_posicoes:
+        if (((posicao['coluna'] == 1) and (posicao['ocupada'] == 1) and 
+             ((posicao['simbolo'] == 'X') or (posicao['simbolo'] == 'O')))):
+            combinacao_feita += posicao['simbolo']
+    if (combinacao_feita == 'XXX'):
+        status = 2
+        jogador_x[3] = 1
+    elif (combinacao_feita == 'OOO'):
+        status = 2
+        jogador_o[3] = 1
+    else:
+        combinacao_feita = ''
+    #vertical 2
+    for posicao in lista_todas_posicoes:
+        if (((posicao['coluna'] == 2) and (posicao['ocupada'] == 1) and 
+             ((posicao['simbolo'] == 'X') or (posicao['simbolo'] == 'O')))):
+            combinacao_feita += posicao['simbolo']
+    if (combinacao_feita == 'XXX'):
+        status = 2
+        jogador_x[3] = 1
+    elif (combinacao_feita == 'OOO'):
+        status = 2
+        jogador_o[3] = 1
+    else:
+        combinacao_feita = ''
+    #vertical 3
+    for posicao in lista_todas_posicoes:
+        if (((posicao['coluna'] == 3) and (posicao['ocupada'] == 1) and 
+             ((posicao['simbolo'] == 'X') or (posicao['simbolo'] == 'O')))):
+            combinacao_feita += posicao['simbolo']
+    if (combinacao_feita == 'XXX'):
+        status = 2
+        jogador_x[3] = 1
+    elif (combinacao_feita == 'OOO'):
+        status = 2
+        jogador_o[3] = 1
+    else:
+        combinacao_feita = ''
+    #diagonal 1
+    for posicao in lista_todas_posicoes:
+        if (((posicao['linha'] == 1) and (posicao['coluna'] == 1) and (posicao['ocupada'] == 1) and 
+             ((posicao['simbolo'] == 'X') or (posicao['simbolo'] == 'O')))):
+            combinacao_feita += posicao['simbolo']
+        elif (((posicao['linha'] == 2) and (posicao['coluna'] == 2) and (posicao['ocupada'] == 1) and 
+             ((posicao['simbolo'] == 'X') or (posicao['simbolo'] == 'O')))):
+            combinacao_feita += posicao['simbolo']
+        elif (((posicao['linha'] == 3) and (posicao['coluna'] == 3) and (posicao['ocupada'] == 1) and 
+             ((posicao['simbolo'] == 'X') or (posicao['simbolo'] == 'O')))):
+            combinacao_feita += posicao['simbolo']
+    if (combinacao_feita == 'XXX'):
+        status = 2
+        jogador_x[3] = 1
+    elif (combinacao_feita == 'OOO'):
+        status = 2
+        jogador_o[3] = 1
+    else:
+        combinacao_feita = ''
+    #diagonal 2
+    for posicao in lista_todas_posicoes:
+        if (((posicao['linha'] == 1) and (posicao['coluna'] == 3) and (posicao['ocupada'] == 1) and 
+             ((posicao['simbolo'] == 'X') or (posicao['simbolo'] == 'O')))):
+            combinacao_feita += posicao['simbolo']
+        elif (((posicao['linha'] == 2) and (posicao['coluna'] == 2) and (posicao['ocupada'] == 1) and 
+             ((posicao['simbolo'] == 'X') or (posicao['simbolo'] == 'O')))):
+            combinacao_feita += posicao['simbolo']
+        elif (((posicao['linha'] == 3) and (posicao['coluna'] == 1) and (posicao['ocupada'] == 1) and 
+             ((posicao['simbolo'] == 'X') or (posicao['simbolo'] == 'O')))):
+            combinacao_feita += posicao['simbolo']
+    if (combinacao_feita == 'XXX'):
+        status = 2
+        jogador_x[3] = 1
+    elif (combinacao_feita == 'OOO'):
+        status = 2
+        jogador_o[3] = 1
+    else:
+        combinacao_feita = ''
+    #todas posicoes ocupadas
+    for posicao in lista_todas_posicoes:
+        if (posicao['ocupada'] == 1):
+            posicoes_ocupadas += 1
+    if (posicoes_ocupadas == 9):
+        status = 1
+    else:
+        posicoes_ocupadas = 0
     return status
 
 
@@ -54,7 +153,7 @@ def atribui_posicao(linha, coluna, simbolo):
             if ((posicao['linha'] == linha) and (posicao['coluna'] == coluna)):
                 posicao_ocupada = posicao['ocupada']
         if (posicao_ocupada == 1):
-            print('Posição escolhida está ocupada pelo outro jogador!')
+            print('Posição escolhida está ocupada! Tente novamente')
             valido = False
         else:
             for posicao in lista_todas_posicoes:
@@ -148,21 +247,20 @@ from os import system
 system('cls')
 jogador_x[1] = input('Nome do Jogador que será o X: ')
 jogador_o[1] = input('Nome do Jogador que será o O: ')
+print('')
 print(f'{jogador_x[1]} inicia a partida!')
+print('')
 input('Enter para iniciar')
 
-while(True):
+while(status_partida() == 0): #repetirá enquanto a partida estiver com status de jogo acontecendo
     system('cls')
-    status = status_partida()
-    if (status == 1 or status == 2):
-        break
-    else:
-        menu()
-        jogador_turno_atual()
+    menu()
+    jogador_turno_atual()
 
 resultado = ''
+system('cls')
 if((jogador_x[3] == 0) and (jogador_o[3] == 0)):
-     resultado = print('Empate')
+     resultado = ('Empate! Nenhum jogador ganhou')
 else:
     if (jogador_x[3] == 1):
         resultado = (f'Vitoria de {jogador_x[1]} que escolheu {jogador_x[2]}!')
