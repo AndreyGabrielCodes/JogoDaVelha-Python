@@ -5,15 +5,43 @@ def pontos_partida():
     print
 
 def status_partida():
-    horizontal_1 = 0
-    horizontal_2 = 0
-    horizontal_3 = 0
-    vertical_1 = 0
-    vertical_2 = 0
-    vertical_3 = 0
-    diagonal_1 = 0
-    diagonal_2 = 0
     todas_posicoes_ocupadas = 0
+    status = 0 #status da partida
+        #status = 0 = jogo acontecendo
+        #status = 1 = empate
+        #status = 2 = vitoria
+    combinacao_feita = ''
+    #linha 1
+    for posicao in lista_todas_posicoes:
+        if (((posicao['linha'] == 1) and (posicao['ocupada'] == 1) and (posicao['simbolo'] == 'X'))):
+            combinacao_feita += 'X'
+        elif (((posicao['linha'] == 1) and (posicao['ocupada'] == 1) and (posicao['simbolo'] == 'O'))):
+            combinacao_feita += 'O'
+    if (combinacao_feita == 'XXX'):
+        status = 2
+        jogador_x[3] = 1
+    elif (combinacao_feita == 'OOO'):
+        status = 2
+        jogador_o[3] = 1
+    else:
+        combinacao_feita = ''
+    #linha 2
+    for posicao in lista_todas_posicoes:
+        if (((posicao['linha'] == 2) and (posicao['ocupada'] == 1) and (posicao['simbolo'] == 'X'))):
+            combinacao_feita += 'X'
+        elif (((posicao['linha'] == 2) and (posicao['ocupada'] == 1) and (posicao['simbolo'] == 'O'))):
+            combinacao_feita += 'O'
+    if (combinacao_feita == 'XXX'):
+        status = 2
+        jogador_x[3] = 1
+    elif (combinacao_feita == 'OOO'):
+        status = 2
+        jogador_o[3] = 1
+    else:
+        combinacao_feita = ''
+    #linha 3
+    return status
+
 
 def atribui_posicao(linha, coluna, simbolo):
     valido = False
@@ -107,8 +135,8 @@ lista_todas_posicoes = [{'ocupada':0,'simbolo':' ','linha':1,'coluna':1},
                         {'ocupada':0,'simbolo':' ','linha':3,'coluna':3}]
 
 #variáveis de jogadores
-jogador_x = [0,'','X'] #pontuação, nome, simbolo
-jogador_o = [0,'','O']
+jogador_x = [0,'','X',0] #pontuação, nome, simbolo, vitoria (0 e 1)
+jogador_o = [0,'','O',0]
 
 #controles globais de jogada
 jog_ult_jogada = jogador_o[1] #jogador 01 como inicial
@@ -117,6 +145,7 @@ simbolo_ult_jog = jogador_o[2]
 from os import system
 
 #programa principal
+system('cls')
 jogador_x[1] = input('Nome do Jogador que será o X: ')
 jogador_o[1] = input('Nome do Jogador que será o O: ')
 print(f'{jogador_x[1]} inicia a partida!')
@@ -124,6 +153,20 @@ input('Enter para iniciar')
 
 while(True):
     system('cls')
-    status_partida()
-    menu()
-    jogador_turno_atual()
+    status = status_partida()
+    if (status == 1 or status == 2):
+        break
+    else:
+        menu()
+        jogador_turno_atual()
+
+resultado = ''
+if((jogador_x[3] == 0) and (jogador_o[3] == 0)):
+     resultado = print('Empate')
+else:
+    if (jogador_x[3] == 1):
+        resultado = (f'Vitoria de {jogador_x[1]} que escolheu {jogador_x[2]}!')
+    elif (jogador_o[3] == 1):
+        resultado = (f'Vitoria de {jogador_o[1]} que escolheu {jogador_o[2]}!')
+
+print(f'Resultado da partida: {resultado}')
