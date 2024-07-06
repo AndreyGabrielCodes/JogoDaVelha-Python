@@ -1,9 +1,32 @@
-def turno_computador():
+def turno_computador(dificuldade):
     """
     Primeiro o computador verifica se o jogador oponente falta uma posicao para fechar uma combinação de vitória
      e o tenta barrar
     Caso não, verifica combinações possíveis, escolhe uma, e começa a completá-la
+    Dificuldades:
+    1 - Facil - Joga em posicoes aleatórias
+    2 - Medio - Joga para formar combinações
+    3 - Dificil - Joga tentando bloquear o jogador
     """
+    #verifica posicoes validas para o computador trabalhar em cima
+    lista_posicoes_validas = []
+    lista_posicoes_validas.clear()
+    for posicao in lista_todas_posicoes:
+        if(posicao['ocupada'] == 0):
+                lista_posicoes_validas.append(posicao['id'])
+
+    match dificuldade:
+        case 1: #facil
+            posicao_escolhida = 0
+            posicao_escolhida = random.choice(lista_posicoes_validas)
+            for posicao in lista_todas_posicoes:
+                if (posicao['id'] == posicao_escolhida):
+                    posicao['ocupada'] = 1
+                    posicao['simbolo'] = 'O'
+        case 2: #medio
+            print
+        case 3: # dificil 
+            print
 
 def reseta_posicoes():
     for posicao in lista_todas_posicoes:
@@ -180,7 +203,15 @@ def jogador_turno_atual(modo_jogo):
     global jog_ult_jogada
     global simbolo_ult_jog
     global primeira_jogada
-    if (primeira_jogada):
+    global dificuldade_computador
+    coluna_escolhida = 0
+    linha_escolhida = 0
+    repete_escolha = False
+    if (modo_jogo == 2 and primeira_jogada == True):
+        while(repete_escolha == False):
+            coluna_escolhida = int(input(f'{jog_ult_jogada}, escolha uma coluna: '))
+            linha_escolhida = int(input(f'{jog_ult_jogada}, escolha uma linha: '))
+            repete_escolha = atribui_posicao(linha_escolhida, coluna_escolhida, simbolo_ult_jog)
         primeira_jogada = False
     elif (jog_ult_jogada == jogador_x[1]):
         jog_ult_jogada = jogador_o[1]
@@ -188,18 +219,15 @@ def jogador_turno_atual(modo_jogo):
     else:
         jog_ult_jogada = jogador_x[1]
         simbolo_ult_jog = jogador_x[2]
-    repete_escolha = False
     #modo jogador x computador
     if((modo_jogo == 2) and jog_ult_jogada == jogador_o[1]):
-        turno_computador()
+        turno_computador(dificuldade_computador)
     else:
         #modo jogador x jogador
         while(repete_escolha == False):
-            coluna = 0
-            linha = 0
-            coluna = int(input(f'{jog_ult_jogada}, escolha uma coluna: '))
-            linha = int(input(f'{jog_ult_jogada}, escolha uma linha: '))
-            repete_escolha = atribui_posicao(linha, coluna, simbolo_ult_jog)
+            coluna_escolhida = int(input(f'{jog_ult_jogada}, escolha uma coluna: '))
+            linha_escolhida = int(input(f'{jog_ult_jogada}, escolha uma linha: '))
+            repete_escolha = atribui_posicao(linha_escolhida, coluna_escolhida, simbolo_ult_jog)
 
 def menu():
     menu = ''
@@ -252,20 +280,20 @@ def jogador_inicio_partida(modo_jogo):
         jog_ult_jogada = jogadores[aleatorio]
         simbolo_ult_jog = simbolos_jogadores[aleatorio]
     else:
-        jog_ult_jogada = jogador_o[1]
-        simbolo_ult_jog = 'O'
+        jog_ult_jogada = jogador_x[1]
+        simbolo_ult_jog = 'X'
     print(f'{jog_ult_jogada} inicia a partida!\n')
 
 #cadastro de posicoes
-lista_todas_posicoes = [{'ocupada':0,'simbolo':' ','linha':1,'coluna':1}, 
-                        {'ocupada':0,'simbolo':' ','linha':1,'coluna':2}, 
-                        {'ocupada':0,'simbolo':' ','linha':1,'coluna':3}, 
-                        {'ocupada':0,'simbolo':' ','linha':2,'coluna':1}, 
-                        {'ocupada':0,'simbolo':' ','linha':2,'coluna':2}, 
-                        {'ocupada':0,'simbolo':' ','linha':2,'coluna':3}, 
-                        {'ocupada':0,'simbolo':' ','linha':3,'coluna':1}, 
-                        {'ocupada':0,'simbolo':' ','linha':3,'coluna':2}, 
-                        {'ocupada':0,'simbolo':' ','linha':3,'coluna':3}]
+lista_todas_posicoes = [{'ocupada':0,'simbolo':' ','linha':1,'coluna':1,'id':1}, 
+                        {'ocupada':0,'simbolo':' ','linha':1,'coluna':2,'id':2}, 
+                        {'ocupada':0,'simbolo':' ','linha':1,'coluna':3,'id':3}, 
+                        {'ocupada':0,'simbolo':' ','linha':2,'coluna':1,'id':4}, 
+                        {'ocupada':0,'simbolo':' ','linha':2,'coluna':2,'id':5}, 
+                        {'ocupada':0,'simbolo':' ','linha':2,'coluna':3,'id':6}, 
+                        {'ocupada':0,'simbolo':' ','linha':3,'coluna':1,'id':7}, 
+                        {'ocupada':0,'simbolo':' ','linha':3,'coluna':2,'id':8}, 
+                        {'ocupada':0,'simbolo':' ','linha':3,'coluna':3,'id':9}]
 
 #variáveis de jogadores
 jogador_x = [0,'','X',0] #pontuação, nome, simbolo, vitoria (0 e 1)
@@ -276,6 +304,9 @@ jog_ult_jogada = ''
 simbolo_ult_jog = ''
 
 primeira_jogada = True
+dificuldade_computador = 0
+
+resultado = ''
 
 from os import system
 import random
@@ -292,7 +323,14 @@ if(modo_jogo == 1):
     jogador_x[1] = input('\n| Nome do Jogador que será o X: ')
     jogador_o[1] = input('| Nome do Jogador que será o O: ')
 else:
-    print('Ainda não configurado!')
+    system('cls')
+    print('| DIFICULDADE |')
+    print('| 1 - Fácil   |')
+    print('| 2 - Médio   |')
+    print('| 3 - Dificil |\n')
+    dificuldade_computador = int(input('Escolha um modo de jogo: '))
+    jogador_x[1] = input('\n| Nome do Jogador que será o X: ')
+    jogador_o[1] = 'Computador'
 while(True):
     system('cls')
     jogador_inicio_partida(modo_jogo)
@@ -301,10 +339,10 @@ while(True):
         system('cls')
         menu()
         jogador_turno_atual(modo_jogo)
-    resultado = ''
     system('cls')
+    menu()
     if((jogador_x[3] == 0) and (jogador_o[3] == 0)):
-        resultado = ('Empate! Nenhum jogador ganhou')
+        resultado = ('| Empate! Nenhum jogador ganhou')
     else:
         if (jogador_x[3] == 1):
             resultado = (f'Vitoria de {jogador_x[1]} que escolheu {jogador_x[2]}!')
@@ -313,7 +351,7 @@ while(True):
             resultado = (f'Vitoria de {jogador_o[1]} que escolheu {jogador_o[2]}!')
             jogador_o[0] += 1
     print(f'| Resultado da partida: {resultado}\n')
-    print(f'| Pontuações:\n- {jogador_x[1]}: {jogador_x[0]}\n-{jogador_o[1]}: {jogador_o[0]}')
+    print(f'| Pontuações:\n| - {jogador_x[1]}: {jogador_x[0]}\n| - {jogador_o[1]}: {jogador_o[0]}')
     reseta_partida = int(input('\nDeseja iniciar uma nova partida ? (1/0): '))
     if(reseta_partida == 1):
         reseta_posicoes()
