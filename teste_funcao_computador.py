@@ -24,19 +24,34 @@ def turno_computador(dificuldade):
                     posicao['ocupada'] = 1
                     posicao['simbolo'] = 'O'
         case 2: #medio
-            print
+            combinacao_escolhida = {'posicao1','posicao2','posicao3'}
+            jogadas_possiveis_comp()
         case 3: # dificil 
             print
 
-lista_todas_posicoes = [{'ocupada':0,'simbolo':' ','linha':1,'coluna':1,'id':1}, 
-                        {'ocupada':0,'simbolo':' ','linha':1,'coluna':2,'id':2}, 
-                        {'ocupada':0,'simbolo':' ','linha':1,'coluna':3,'id':3}, 
-                        {'ocupada':0,'simbolo':' ','linha':2,'coluna':1,'id':4}, 
-                        {'ocupada':0,'simbolo':' ','linha':2,'coluna':2,'id':5}, 
-                        {'ocupada':0,'simbolo':' ','linha':2,'coluna':3,'id':6}, 
-                        {'ocupada':0,'simbolo':' ','linha':3,'coluna':1,'id':7}, 
-                        {'ocupada':0,'simbolo':' ','linha':3,'coluna':2,'id':8}, 
-                        {'ocupada':0,'simbolo':' ','linha':3,'coluna':3,'id':9}]
+def jogadas_possiveis_comp():
+        print
+
+        
+
+
+lista_todas_posicoes = [
+    {'ocupada':0,'simbolo':' ','linha':1,'coluna':1,'id':1},
+    {'ocupada':0,'simbolo':' ','linha':1,'coluna':2,'id':2},
+    {'ocupada':0,'simbolo':' ','linha':1,'coluna':3,'id':3},
+    {'ocupada':0,'simbolo':' ','linha':2,'coluna':1,'id':4},
+    {'ocupada':0,'simbolo':' ','linha':2,'coluna':2,'id':5},
+    {'ocupada':0,'simbolo':' ','linha':2,'coluna':3,'id':6},
+    {'ocupada':0,'simbolo':' ','linha':3,'coluna':1,'id':7},
+    {'ocupada':0,'simbolo':' ','linha':3,'coluna':2,'id':8},
+    {'ocupada':0,'simbolo':' ','linha':3,'coluna':3,'id':9}]
+
+lista_comb_possiveis = [
+    #combinações em linha
+    {'valida_comp':0,'posicoes':[(lista_todas_posicoes['id'] == 1),(lista_todas_posicoes['id'] == 2),(lista_todas_posicoes['id'] == 3)],'id_comb':1}
+    #combinações em vertical
+    #combinações em diagonal
+                        ]
 
 def menu():
     menu = ''
@@ -80,7 +95,9 @@ def menu():
 import random
 from os import system
 
-system('cls')
+print(lista_comb_possiveis)
+
+"""system('cls')
 dificuldade = 1
 turno_computador(dificuldade)
-menu()
+menu()"""
