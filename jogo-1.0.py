@@ -4,17 +4,6 @@ def turno_computador():
      e o tenta barrar
     Caso não, verifica combinações possíveis, escolhe uma, e começa a completá-la
     """
-    #checa posicao escolhida pelo oponente
-
-        #jogador iniciou em um dos cantos
-
-    #checa combinações possíveis de fazer
-
-
-
-
-
-    combinacao_escolhida = 0
 
 def reseta_posicoes():
     for posicao in lista_todas_posicoes:
