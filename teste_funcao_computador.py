@@ -8,16 +8,17 @@ def turno_computador(dificuldade):
     2 - Medio - Joga para formar combinações
     3 - Dificil - Joga tentando bloquear o jogador
     """
-    #verifica posicoes validas
+    #verifica posicoes validas para o computador trabalhar em cima
     lista_posicoes_validas = []
     lista_posicoes_validas.clear()
     for posicao in lista_todas_posicoes:
         if(posicao['ocupada'] == 0):
                 lista_posicoes_validas.append(posicao['id'])
+
     match dificuldade:
         case 1: #facil
             posicao_escolhida = 0
-            posicao_escolhida = random.choice(lista_todas_posicoes)
+            posicao_escolhida = random.choice(lista_posicoes_validas)
             for posicao in lista_todas_posicoes:
                 if (posicao['id'] == posicao_escolhida):
                     posicao['ocupada'] = 1
@@ -31,7 +32,7 @@ lista_todas_posicoes = [{'ocupada':0,'simbolo':' ','linha':1,'coluna':1,'id':1},
                         {'ocupada':0,'simbolo':' ','linha':1,'coluna':2,'id':2}, 
                         {'ocupada':0,'simbolo':' ','linha':1,'coluna':3,'id':3}, 
                         {'ocupada':0,'simbolo':' ','linha':2,'coluna':1,'id':4}, 
-                        {'ocupada':1,'simbolo':' ','linha':2,'coluna':2,'id':5}, 
+                        {'ocupada':0,'simbolo':' ','linha':2,'coluna':2,'id':5}, 
                         {'ocupada':0,'simbolo':' ','linha':2,'coluna':3,'id':6}, 
                         {'ocupada':0,'simbolo':' ','linha':3,'coluna':1,'id':7}, 
                         {'ocupada':0,'simbolo':' ','linha':3,'coluna':2,'id':8}, 
@@ -77,8 +78,9 @@ def menu():
 
 #from os import system
 import random
+from os import system
 
-print(menu)
+system('cls')
 dificuldade = 1
 turno_computador(dificuldade)
-print(menu)
+menu()
