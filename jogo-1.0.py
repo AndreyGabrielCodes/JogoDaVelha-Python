@@ -187,7 +187,12 @@ def jogador_turno_atual(modo_jogo):
     global jogador_o
     global jog_ult_jogada
     global simbolo_ult_jog
-    if (jog_ult_jogada == jogador_x[1]):
+    global primeira_jogada
+    if (primeira_jogada):
+        jog_ult_jogada = jogador_x[1]
+        simbolo_ult_jog = jogador_x[2]
+        primeira_jogada = False
+    elif (jog_ult_jogada == jogador_x[1]):
         jog_ult_jogada = jogador_o[1]
         simbolo_ult_jog = jogador_o[2]
     else:
@@ -259,6 +264,7 @@ def jogador_inicio_partida(modo_jogo):
     else:
         jog_ult_jogada = jogador_o[1]
         simbolo_ult_jog = 'O'
+    print(f'{jog_ult_jogada} inicia a partida!\n')
 
 #cadastro de posicoes
 lista_todas_posicoes = [{'ocupada':0,'simbolo':' ','linha':1,'coluna':1}, 
@@ -279,6 +285,8 @@ jogador_o = [0,'','O',0]
 jog_ult_jogada = ''
 simbolo_ult_jog = ''
 
+primeira_jogada = True
+
 from os import system
 import random
 
@@ -297,7 +305,6 @@ else:
     print('Ainda não configurado!')
 while(True):
     system('cls')
-    print(f'{jog_ult_jogada} inicia a partida!\n')
     jogador_inicio_partida(modo_jogo)
     input('Enter para iniciar partida')
     while(status_partida() == 0): #repetirá enquanto a partida estiver com status de jogo acontecendo
