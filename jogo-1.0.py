@@ -159,30 +159,35 @@ def jogador_turno_atual(modo_jogo):
     global simbolo_ult_jog
     global primeira_jogada
     global dificuldade_computador
-    coluna_escolhida = 0
-    linha_escolhida = 0
-    repete_escolha = False
-    if (modo_jogo == 2 and primeira_jogada == True):
-        while(repete_escolha == False):
-            coluna_escolhida = int(input(f'{jog_ult_jogada}, escolha uma coluna: '))
-            linha_escolhida = int(input(f'{jog_ult_jogada}, escolha uma linha: '))
-            repete_escolha = atribui_posicao(linha_escolhida, coluna_escolhida, simbolo_ult_jog)
+    if (((modo_jogo in (1,2)) and (primeira_jogada == True)) or ((modo_jogo == 1) and (primeira_jogada == True))):
+        escolhe_posicao()
         primeira_jogada = False
-    elif (jog_ult_jogada == jogador_x[1]):
-        jog_ult_jogada = jogador_o[1]
-        simbolo_ult_jog = jogador_o[2]
-    else:
-        jog_ult_jogada = jogador_x[1]
-        simbolo_ult_jog = jogador_x[2]
+    elif ((modo_jogo == 1)):
+        if ((jog_ult_jogada == jogador_x[1])):
+            jog_ult_jogada = jogador_o[1]
+            simbolo_ult_jog = jogador_o[2]
+            escolhe_posicao()
+        else:
+            jog_ult_jogada = jogador_x[1]
+            simbolo_ult_jog = jogador_x[2]
+            escolhe_posicao()
     #modo jogador x computador
-    if((modo_jogo == 2) and jog_ult_jogada == jogador_o[1]):
-        turno_computador(dificuldade_computador)
-    else:
-        #modo jogador x jogador
-        while(repete_escolha == False):
-            coluna_escolhida = int(input(f'{jog_ult_jogada}, escolha uma coluna: '))
-            linha_escolhida = int(input(f'{jog_ult_jogada}, escolha uma linha: '))
-            repete_escolha = atribui_posicao(linha_escolhida, coluna_escolhida, simbolo_ult_jog)
+    elif ((modo_jogo == 2)):
+        if(jog_ult_jogada == jogador_x[1]):
+            turno_computador(dificuldade_computador)
+            jog_ult_jogada = jogador_o[1]
+            simbolo_ult_jog = 'O'
+        else:
+            jog_ult_jogada = jogador_x[1]
+            simbolo_ult_jog = 'X'
+            escolhe_posicao()
+
+def escolhe_posicao():
+   repete_escolha = False
+   while(repete_escolha == False):
+        coluna_escolhida = int(input(f'{jog_ult_jogada}, escolha uma coluna: '))
+        linha_escolhida = int(input(f'{jog_ult_jogada}, escolha uma linha: '))
+        repete_escolha = atribui_posicao(linha_escolhida, coluna_escolhida, simbolo_ult_jog) 
 
 def menu():
     menu = ''
