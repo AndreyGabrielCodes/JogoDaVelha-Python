@@ -39,7 +39,6 @@ def status_partida():
         #status = 0 = jogo acontecendo
         #status = 1 = empate
         #status = 2 = vitoria
-    combinacao_feita = ''
     posicoes_ocupadas = 0
     sentido_posicao = 'linha'
     numero_posicao = 1
@@ -50,33 +49,26 @@ def status_partida():
         #verifica posicoes ocupadas pelos simbolos no sentido "linha" e "coluna"
         if (sentido_posicao in ('linha','coluna')):
             for posicao in lista_todas_posicoes:
-                if (((posicao[sentido_posicao] == numero_posicao) and (posicao['ocupada'] == 1) and 
-                        ((posicao['simbolo'] == 'X') or (posicao['simbolo'] == 'O')))):
+                if ((posicao[sentido_posicao] == numero_posicao) and (posicao['simbolo'] in ('X','O'))):
                     combinacao_feita += posicao['simbolo']
         #verifica posicoes ocupadas pelos simbolos no sentido "diagonal"
         elif(sentido_posicao == 'diagonal1'):
             #diagonal esquerda para direita
             for posicao in lista_todas_posicoes:
-                if (((posicao['linha'] == 1) and (posicao['coluna'] == 1) and (posicao['ocupada'] == 1) and 
-                    ((posicao['simbolo'] == 'X') or (posicao['simbolo'] == 'O')))):
+                if ((posicao['linha'] == 1) and (posicao['coluna'] == 1) and (posicao['simbolo'] in ('X','O'))):
                     combinacao_feita += posicao['simbolo']
-                elif (((posicao['linha'] == 2) and (posicao['coluna'] == 2) and (posicao['ocupada'] == 1) and 
-                    ((posicao['simbolo'] == 'X') or (posicao['simbolo'] == 'O')))):
+                elif ((posicao['linha'] == 2) and (posicao['coluna'] == 2) and (posicao['simbolo'] in ('X','O'))):
                     combinacao_feita += posicao['simbolo']
-                elif (((posicao['linha'] == 3) and (posicao['coluna'] == 3) and (posicao['ocupada'] == 1) and 
-                    ((posicao['simbolo'] == 'X') or (posicao['simbolo'] == 'O')))):
+                elif ((posicao['linha'] == 3) and (posicao['coluna'] == 3) and (posicao['simbolo'] in ('X','O'))):
                     combinacao_feita += posicao['simbolo']
         elif(sentido_posicao == 'diagonal2'):
             #diagonal direita para esquerda
             for posicao in lista_todas_posicoes:
-                if (((posicao['linha'] == 1) and (posicao['coluna'] == 3) and (posicao['ocupada'] == 1) and 
-                        ((posicao['simbolo'] == 'X') or (posicao['simbolo'] == 'O')))):
+                if ((posicao['linha'] == 1) and (posicao['coluna'] == 3) and (posicao['simbolo'] in ('X','O'))):
                     combinacao_feita += posicao['simbolo']
-                elif (((posicao['linha'] == 2) and (posicao['coluna'] == 2) and (posicao['ocupada'] == 1) and 
-                        ((posicao['simbolo'] == 'X') or (posicao['simbolo'] == 'O')))):
+                elif ((posicao['linha'] == 2) and (posicao['coluna'] == 2) and (posicao['simbolo'] in ('X','O'))):
                     combinacao_feita += posicao['simbolo']
-                elif (((posicao['linha'] == 3) and (posicao['coluna'] == 1) and (posicao['ocupada'] == 1) and 
-                        ((posicao['simbolo'] == 'X') or (posicao['simbolo'] == 'O')))):
+                elif ((posicao['linha'] == 3) and (posicao['coluna'] == 1) and (posicao['simbolo'] in ('X','O'))):
                     combinacao_feita += posicao['simbolo']
         #altera os sentidos e posicoes conforme as posicoes forem verificadas
         if((sentido_posicao == 'linha') and(numero_posicao < 3)):
