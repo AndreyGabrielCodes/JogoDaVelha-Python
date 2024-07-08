@@ -195,40 +195,16 @@ def escolhe_posicao():
 
 def menu():
     menu = ''
-    posicao1_1 = ' '
-    posicao1_2 = ' '
-    posicao1_3 = ' '
-    posicao2_1 = ' '
-    posicao2_2 = ' '
-    posicao2_3 = ' '
-    posicao3_1 = ' '
-    posicao3_2 = ' '
-    posicao3_3 = ' '
-    for posicao in lista_todas_posicoes:
-        #verificar depois se é possível encurtar esta função fazendo a comparação de linha e coluna 
-        # virarem variaveis que vão alterando os valores compreendendo cada posicao
-        #linha 1
-        if ((posicao['linha'] == 1) and (posicao['coluna'] == 1)):
-            posicao1_1 = posicao['simbolo']
-        elif ((posicao['linha'] == 1) and (posicao['coluna'] == 2)):
-            posicao1_2 = posicao['simbolo']
-        elif ((posicao['linha'] == 1) and (posicao['coluna'] == 3)):
-            posicao1_3 = posicao['simbolo']
-        #linha 2
-        elif ((posicao['linha'] == 2) and (posicao['coluna'] == 1)):
-            posicao2_1 = posicao['simbolo']
-        elif ((posicao['linha'] == 2) and (posicao['coluna'] == 2)):
-            posicao2_2 = posicao['simbolo']
-        elif ((posicao['linha'] == 2) and (posicao['coluna'] == 3)):
-            posicao2_3 = posicao['simbolo']
-        #linha 3
-        elif ((posicao['linha'] == 3) and (posicao['coluna'] == 1)):
-            posicao3_1 = posicao['simbolo']
-        elif ((posicao['linha'] == 3) and (posicao['coluna'] == 2)):
-            posicao3_2 = posicao['simbolo']
-        elif ((posicao['linha'] == 3) and (posicao['coluna'] == 3)):
-            posicao3_3 = posicao['simbolo']
-    menu = f"""JOGO DA VELHA 1.0\n\n Coluna x Linha\n      1 2 3  \n    1|{posicao1_1}|{posicao1_2}|{posicao1_3}|\n    2|{posicao2_1}|{posicao2_2}|{posicao2_3}|\n    3|{posicao3_1}|{posicao3_2}|{posicao3_3}|\n"""
+    id_posicao = 1
+    lista_exibe_pos = []
+    while(True):
+        for posicao in lista_todas_posicoes:
+            if (posicao['id'] == id_posicao):
+                lista_exibe_pos.append(posicao['simbolo'])
+        id_posicao += 1
+        if(id_posicao > 9):
+            break
+    menu = f'JOGO DA VELHA 1.0\n\n Coluna x Linha\n      1 2 3  \n    1|{lista_exibe_pos[0]}|{lista_exibe_pos[1]}|{lista_exibe_pos[2]}|\n    2|{lista_exibe_pos[3]}|{lista_exibe_pos[4]}|{lista_exibe_pos[5]}|\n    3|{lista_exibe_pos[6]}|{lista_exibe_pos[7]}|{lista_exibe_pos[8]}|\n'
     print(menu)
 
 def jogador_inicio_partida(modo_jogo):
