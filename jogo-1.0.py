@@ -159,9 +159,12 @@ def jogador_turno_atual(modo_jogo):
     global simbolo_ult_jog
     global primeira_jogada
     global dificuldade_computador
+    #verifica se é a primeira jogada para manter o jogador que foi selecionado pela função "jogador_inicio_partida" 
+    # ou se o modo é "jogador x computador" para sempre começar com o jogador
     if (((modo_jogo in (1,2)) and (primeira_jogada == True)) or ((modo_jogo == 1) and (primeira_jogada == True))):
         escolhe_posicao()
         primeira_jogada = False
+    #modo jogador x jogador - altera o jogador conforme o ultimo que jogou
     elif ((modo_jogo == 1)):
         if ((jog_ult_jogada == jogador_x[1])):
             jog_ult_jogada = jogador_o[1]
@@ -171,7 +174,7 @@ def jogador_turno_atual(modo_jogo):
             jog_ult_jogada = jogador_x[1]
             simbolo_ult_jog = jogador_x[2]
             escolhe_posicao()
-    #modo jogador x computador
+    #modo jogador x computador - altera o jogador conforme o ultimo que jogou
     elif ((modo_jogo == 2)):
         if(jog_ult_jogada == jogador_x[1]):
             turno_computador(dificuldade_computador)
@@ -184,6 +187,7 @@ def jogador_turno_atual(modo_jogo):
 
 def escolhe_posicao():
    repete_escolha = False
+   #repete a escolha das posicoes conforme retorno true ou false da função "atribui_posicao"
    while(repete_escolha == False):
         coluna_escolhida = int(input(f'{jog_ult_jogada}, escolha uma coluna: '))
         linha_escolhida = int(input(f'{jog_ult_jogada}, escolha uma linha: '))
