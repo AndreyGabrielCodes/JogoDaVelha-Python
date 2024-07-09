@@ -8,13 +8,14 @@ def turno_computador(dificuldade):
     2 - Medio - Joga para formar combinações
     3 - Dificil - Joga tentando bloquear o jogador
     """
+    pc_comb_escolhida = 0
+    pc_comb_valida = False
     #verifica posicoes validas para o computador trabalhar em cima
     lista_posicoes_validas = []
     lista_posicoes_validas.clear()
     for posicao in lista_todas_posicoes:
         if(posicao['ocupada'] == 0):
                 lista_posicoes_validas.append(posicao['id'])
-
     match dificuldade:
         case 1: #facil
             posicao_escolhida = 0
@@ -24,7 +25,34 @@ def turno_computador(dificuldade):
                     posicao['ocupada'] = 1
                     posicao['simbolo'] = 'O'
         case 2: #medio
-            print
+            pc_comb_possiveis()
+            lista_comb_possiveis = []
+            #escolhe uma combinação aleatória caso nenhuma outra tenha sido escolhida
+            if ((pc_comb_escolhida == 0) or (pc_comb_valida == False)):
+                for comb in lista_pc_comb:
+                    if (comb['valido'] == 1):
+                        lista_comb_possiveis.append(comb['id'])
+                #caso todas as combinações estejam indisponíveis
+                # altera para o computador jogador aleatoriamente
+                if (lista_comb_possiveis == []):
+                    dificuldade = 1
+                else:
+                    comb_escolhida = 0
+                    comb_escolhida = random.choice(lista_comb_possiveis)
+                    pc_comb_escolhida = comb_escolhida
+                    pc_comb_valida = True
+            else:
+                #verifica se combinação escolhida ainda é válida
+                for comb in lista_pc_comb:
+                    if (comb['id'] == pc_comb_escolhida):
+                        if (comb['valido'] == 0):
+                            pc_comb_valida = False
+                        else:
+                            pc_comb_valida = True
+
+            if ((pc_comb_valida == True) and (dificuldade != 1)):
+                print
+
         case 3: # dificil 
             print
 
@@ -129,9 +157,10 @@ def menu():
 import random
 from os import system
 
+dificuldade_computador = 1
+
 pc_comb_possiveis()
 
 """system('cls')
-dificuldade = 1
 turno_computador(dificuldade)
 menu()"""
