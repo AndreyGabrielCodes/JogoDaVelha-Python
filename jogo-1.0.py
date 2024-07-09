@@ -174,24 +174,18 @@ def jogador_turno_atual(modo_jogo):
         escolhe_posicao()
         primeira_jogada = False
     #modo jogador x jogador - altera o jogador conforme o ultimo que jogou
-    elif ((modo_jogo == 1)):
+    else:
         if ((jog_ult_jogada == jogador_x[1])):
             jog_ult_jogada = jogador_o[1]
             simbolo_ult_jog = jogador_o[2]
-            escolhe_posicao()
+            #modo jogador x computador - altera o jogador conforme modo
+            if (modo_jogo == 1):
+                escolhe_posicao()
+            else:
+                turno_computador(dificuldade_computador)
         else:
             jog_ult_jogada = jogador_x[1]
             simbolo_ult_jog = jogador_x[2]
-            escolhe_posicao()
-    #modo jogador x computador - altera o jogador conforme o ultimo que jogou
-    elif ((modo_jogo == 2)):
-        if(jog_ult_jogada == jogador_x[1]):
-            turno_computador(dificuldade_computador)
-            jog_ult_jogada = jogador_o[1]
-            simbolo_ult_jog = 'O'
-        else:
-            jog_ult_jogada = jogador_x[1]
-            simbolo_ult_jog = 'X'
             escolhe_posicao()
 
 def escolhe_posicao():
