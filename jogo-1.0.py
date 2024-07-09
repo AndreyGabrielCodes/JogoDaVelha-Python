@@ -1,3 +1,41 @@
+def valida_per(text_per, tipo, min=0, max=0):
+    """
+    Função para validar a entrada do usuário com tipo e intervalo definidos.
+
+    - tipo: define se a entrada é texto (str) ou número (int ou float).
+    - minimo e maximo: definem o intervalo para valores numéricos (opcional).
+    """
+    while True:
+        try:
+            if tipo in (int, float):
+                resposta = float(input(text_per))
+                if min <= resposta <= max:
+                    return int(resposta)
+                else:
+                    system('cls')
+                    menu()
+                    print(f'*Linha ou coluna fora do intervalo existente!\n')
+            elif tipo == str:
+                resposta = input(text_per)
+                if len(resposta) >= 1:
+                    return resposta
+                else:
+                    system('cls')
+                    print('*Tipo de valor inválido')
+            elif tipo == 'menu':
+                resposta = float(input(text_per))
+                if min <= resposta <= max:
+                    return int(resposta)
+                else:
+                    print(f'*Valor fora do intervalo: {min} a {max}')
+            else:
+                system('cls')
+                menu()
+                raise TypeError('*Tipo de valor inválido')
+        except ValueError:
+            print('*Tipo de valor inválido')
+
+
 def turno_computador(dificuldade):
     """
     Primeiro o computador verifica se o jogador oponente falta uma posicao para fechar uma combinação de vitória
@@ -105,28 +143,22 @@ def status_partida():
 
 def atribui_posicao(linha, coluna, simbolo):
     valido = False
-    if ((linha > 3 or linha < 1) or (coluna > 3 or coluna < 1)):
-        valido = False
+    posicao_ocupada = 0
+    for posicao in lista_todas_posicoes:
+        if ((posicao['linha'] == linha) and (posicao['coluna'] == coluna)):
+            posicao_ocupada = posicao['ocupada']
+    if (posicao_ocupada == 1):
         system('cls')
         menu()
-        print('*Linha ou coluna fora do intervalo existente!\n')
+        print('*Posição escolhida está ocupada! Tente novamente\n')
+        valido = False
     else:
-        posicao_ocupada = 0
         for posicao in lista_todas_posicoes:
             if ((posicao['linha'] == linha) and (posicao['coluna'] == coluna)):
-                posicao_ocupada = posicao['ocupada']
-        if (posicao_ocupada == 1):
-            system('cls')
-            menu()
-            print('*Posição escolhida está ocupada! Tente novamente\n')
-            valido = False
-        else:
-            for posicao in lista_todas_posicoes:
-                if ((posicao['linha'] == linha) and (posicao['coluna'] == coluna)):
-                    posicao['ocupada'] = 1
-                    posicao['simbolo'] = simbolo
-            print('Posição escolhida com sucesso!')
-            valido = True
+                posicao['ocupada'] = 1
+                posicao['simbolo'] = simbolo
+        print('Posição escolhida com sucesso!')
+        valido = True
     return valido
 
 def jogador_turno_atual(modo_jogo):
@@ -166,8 +198,8 @@ def escolhe_posicao():
    repete_escolha = False
    #repete a escolha das posicoes conforme retorno true ou false da função "atribui_posicao"
    while(repete_escolha == False):
-        coluna_escolhida = int(input(f'{jog_ult_jogada}, escolha uma coluna: '))
-        linha_escolhida = int(input(f'{jog_ult_jogada}, escolha uma linha: '))
+        coluna_escolhida = valida_per(f'{jog_ult_jogada}, escolha uma coluna: ',int,1,3)
+        linha_escolhida = valida_per(f'{jog_ult_jogada}, escolha uma linha: ',int,1,3)
         repete_escolha = atribui_posicao(linha_escolhida, coluna_escolhida, simbolo_ult_jog) 
 
 def menu():
@@ -233,18 +265,18 @@ print('|                          |')
 print('|       MODO DE JOGO       |')
 print('| 1 - Jogador x Jogador    |')
 print('| 2 - Jogador x Computador |\n')
-modo_jogo = int(input('Escolha um modo de jogo: '))
+modo_jogo = valida_per('Escolha um modo de jogo: ','menu',1,2)
 if(modo_jogo == 1):
-    jogador_x[1] = input('\n| Nome do Jogador que será o X: ')
-    jogador_o[1] = input('| Nome do Jogador que será o O: ')
+    jogador_x[1] = valida_per('\n| Nome do Jogador que será o X: ',str)
+    jogador_o[1] = valida_per('| Nome do Jogador que será o O: ',str)
 else:
     system('cls')
     print('| DIFICULDADE |')
     print('| 1 - Fácil   |')
     print('| 2 - Médio   |')
     print('| 3 - Dificil |\n')
-    dificuldade_computador = int(input('Escolha um modo de jogo: '))
-    jogador_x[1] = input('\n| Nome do Jogador que será o X: ')
+    dificuldade_computador = valida_per('Escolha um modo de jogo: ','menu',1,3)
+    jogador_x[1] = valida_per('\n| Nome do Jogador que será o X: ',str)
     jogador_o[1] = 'Computador'
 while(True):
     system('cls')
@@ -267,7 +299,7 @@ while(True):
             jogador_o[0] += 1
     print(f'| Resultado da partida: {resultado}\n')
     print(f'| Pontuações:\n| - {jogador_x[1]}: {jogador_x[0]}\n| - {jogador_o[1]}: {jogador_o[0]}')
-    reseta_partida = int(input('\nDeseja iniciar uma nova partida ? (1/0): '))
+    reseta_partida = valida_per('\nDeseja iniciar uma nova partida ? (1/0): ','menu',0,1)
     if(reseta_partida == 1):
         reseta_posicoes()
         primeira_jogada = True
