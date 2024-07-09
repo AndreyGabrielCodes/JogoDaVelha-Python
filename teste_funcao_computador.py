@@ -46,58 +46,24 @@ lista_todas_posicoes = [
     {'ocupada':0,'simbolo':' ','linha':3,'coluna':2,'id':8},
     {'ocupada':0,'simbolo':' ','linha':3,'coluna':3,'id':9}]
 
-lista_comb_possiveis = [
-    #combinações em linha
-    {'valida_comp':0,'posicoes':[(lista_todas_posicoes['id'] == 1),(lista_todas_posicoes['id'] == 2),(lista_todas_posicoes['id'] == 3)],'id_comb':1}
-    #combinações em vertical
-    #combinações em diagonal
-                        ]
-
 def menu():
     menu = ''
-    posicao1_1 = ' '
-    posicao1_2 = ' '
-    posicao1_3 = ' '
-    posicao2_1 = ' '
-    posicao2_2 = ' '
-    posicao2_3 = ' '
-    posicao3_1 = ' '
-    posicao3_2 = ' '
-    posicao3_3 = ' '
-    for posicao in lista_todas_posicoes:
-        #verificar depois se é possível encurtar esta função fazendo a comparação de linha e coluna 
-        # virarem variaveis que vão alterando os valores compreendendo cada posicao
-        #linha 1
-        if ((posicao['linha'] == 1) and (posicao['coluna'] == 1)):
-            posicao1_1 = posicao['simbolo']
-        elif ((posicao['linha'] == 1) and (posicao['coluna'] == 2)):
-            posicao1_2 = posicao['simbolo']
-        elif ((posicao['linha'] == 1) and (posicao['coluna'] == 3)):
-            posicao1_3 = posicao['simbolo']
-        #linha 2
-        elif ((posicao['linha'] == 2) and (posicao['coluna'] == 1)):
-            posicao2_1 = posicao['simbolo']
-        elif ((posicao['linha'] == 2) and (posicao['coluna'] == 2)):
-            posicao2_2 = posicao['simbolo']
-        elif ((posicao['linha'] == 2) and (posicao['coluna'] == 3)):
-            posicao2_3 = posicao['simbolo']
-        #linha 3
-        elif ((posicao['linha'] == 3) and (posicao['coluna'] == 1)):
-            posicao3_1 = posicao['simbolo']
-        elif ((posicao['linha'] == 3) and (posicao['coluna'] == 2)):
-            posicao3_2 = posicao['simbolo']
-        elif ((posicao['linha'] == 3) and (posicao['coluna'] == 3)):
-            posicao3_3 = posicao['simbolo']
-    menu = f"""JOGO DA VELHA 1.0\n\n Coluna x Linha\n      1 2 3  \n    1|{posicao1_1}|{posicao1_2}|{posicao1_3}|\n    2|{posicao2_1}|{posicao2_2}|{posicao2_3}|\n    3|{posicao3_1}|{posicao3_2}|{posicao3_3}|\n"""
+    id_posicao = 1
+    lista_exibe_pos = []
+    while(id_posicao < 10):
+        for posicao in lista_todas_posicoes:
+            if (posicao['id'] == id_posicao):
+                lista_exibe_pos.append(posicao['simbolo'])
+        id_posicao += 1
+    menu = f'JOGO DA VELHA 1.0\n\n Coluna x Linha\n      1 2 3  \n    1|{lista_exibe_pos[0]}|{lista_exibe_pos[1]}|{lista_exibe_pos[2]}|\n    2|{lista_exibe_pos[3]}|{lista_exibe_pos[4]}|{lista_exibe_pos[5]}|\n    3|{lista_exibe_pos[6]}|{lista_exibe_pos[7]}|{lista_exibe_pos[8]}|\n'
     print(menu)
 
 #from os import system
 import random
 from os import system
 
-print(lista_comb_possiveis)
 
-"""system('cls')
+system('cls')
 dificuldade = 1
 turno_computador(dificuldade)
-menu()"""
+menu()
