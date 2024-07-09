@@ -33,10 +33,9 @@ def valida_per(text_per, tipo, min=0, max=0):
                 menu()
                 raise TypeError('*Tipo de valor inválido')
         except ValueError:
-            print('*Tipo de valor inválido')
+            print('*Tipo de valor inválido')              
 
-
-def turno_computador(dificuldade):
+def pc_turno(dificuldade):
     """
     Primeiro o computador verifica se o jogador oponente falta uma posicao para fechar uma combinação de vitória
      e o tenta barrar
@@ -118,7 +117,7 @@ def status_partida():
                     if ((posicao['id'] in (3,5,7)) and posicao['simbolo'] in ('X','O')):
                         combinacao_feita += posicao['simbolo']
             case 9:
-                 #todas posicoes ocupadas
+            #todas posicoes ocupadas
                 for posicao in lista_todas_posicoes:
                     if (posicao['ocupada'] == 1):
                         posicoes_ocupadas += 1
@@ -182,7 +181,7 @@ def jogador_turno_atual(modo_jogo):
             if (modo_jogo == 1):
                 escolhe_posicao()
             else:
-                turno_computador(dificuldade_computador)
+                pc_turno(dificuldade_computador)
         else:
             jog_ult_jogada = jogador_x[1]
             simbolo_ult_jog = jogador_x[2]
@@ -245,7 +244,7 @@ jog_ult_jogada = ''
 simbolo_ult_jog = ''
 
 primeira_jogada = True
-dificuldade_computador = 0
+dificuldade_computador = 1
 
 resultado = ''
 

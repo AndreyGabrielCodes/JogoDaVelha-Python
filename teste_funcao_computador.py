@@ -24,16 +24,83 @@ def turno_computador(dificuldade):
                     posicao['ocupada'] = 1
                     posicao['simbolo'] = 'O'
         case 2: #medio
-            combinacao_escolhida = {'posicao1','posicao2','posicao3'}
-            jogadas_possiveis_comp()
+            print
         case 3: # dificil 
             print
 
-def jogadas_possiveis_comp():
-        print
-
+def pc_comb_possiveis():
+    numero_combinacao = 1
+    #limpa combinações armazenadas
+    for comb in lista_pc_comb:
+        comb['comb'] = ''
+        comb['valido'] = 0
+    #verifica combinações e as armezena em cada id de combinação
+    # para depois verificar quais podem ser feitas
+    while(True):
+        match numero_combinacao:
+            #verifica linhas
+            case 1:
+                for posicao in lista_todas_posicoes:
+                    if (posicao['id'] in (1,2,3)):
+                        for comb in lista_pc_comb:
+                            if(comb['id'] == 1):
+                                comb['comb'] += posicao['simbolo']
+            case 2:
+                for posicao in lista_todas_posicoes:
+                    if (posicao['id'] in (4,5,6)):
+                        for comb in lista_pc_comb:
+                            if(comb['id'] == 2):
+                                comb['comb'] += posicao['simbolo']
+            case 3:
+                for posicao in lista_todas_posicoes:
+                    if (posicao['id'] in (7,8,9)):
+                        for comb in lista_pc_comb:
+                            if(comb['id'] == 3):
+                                comb['comb'] += posicao['simbolo']
+            #verifica colunas
+            case 4:
+                for posicao in lista_todas_posicoes:
+                    if (posicao['id'] in (1,4,7)):
+                        for comb in lista_pc_comb:
+                            if(comb['id'] == 4):
+                                comb['comb'] += posicao['simbolo']
+            case 5:
+                for posicao in lista_todas_posicoes:
+                    if (posicao['id'] in (2,5,8)):
+                        for comb in lista_pc_comb:
+                            if(comb['id'] == 5):
+                                comb['comb'] += posicao['simbolo']
+            case 6:
+                for posicao in lista_todas_posicoes:
+                    if (posicao['id'] in (3,6,9)):
+                        for comb in lista_pc_comb:
+                            if(comb['id'] == 6):
+                                comb['comb'] += posicao['simbolo']
+            #verifica diagonais
+            case 7:
+                for posicao in lista_todas_posicoes:
+                    if (posicao['id'] in (1,5,9)):
+                        for comb in lista_pc_comb:
+                            if(comb['id'] == 7):
+                                comb['comb'] += posicao['simbolo']
+            case 8:
+                for posicao in lista_todas_posicoes:
+                    if (posicao['id'] in (3,5,7)):
+                        for comb in lista_pc_comb:
+                            if(comb['id'] == 8):
+                                comb['comb'] += posicao['simbolo']
+            case 10:
+                break
+        for comb in lista_pc_comb:
+            if(comb['comb'] == '   '):
+                comb['valido'] = 1
+        numero_combinacao +=1
         
-
+lista_pc_comb = [
+    {'id':1,'comb':'','valido':0},{'id':2,'comb':'','valido':0},
+    {'id':3,'comb':'','valido':0},{'id':4,'comb':'','valido':0},
+    {'id':5,'comb':'','valido':0},{'id':6,'comb':'','valido':0},
+    {'id':7,'comb':'','valido':0},{'id':8,'comb':'','valido':0},]
 
 lista_todas_posicoes = [
     {'ocupada':0,'simbolo':' ','linha':1,'coluna':1,'id':1},
@@ -62,8 +129,9 @@ def menu():
 import random
 from os import system
 
+pc_comb_possiveis()
 
-system('cls')
+"""system('cls')
 dificuldade = 1
 turno_computador(dificuldade)
-menu()
+menu()"""
