@@ -8,12 +8,19 @@ lista_preenc_pos_comb_esc = [{'id':1,'pos':0,'ocupada':0},
                             {'id':3,'pos':0,'ocupada':0}]
 
 def pc_modo_facil():
+    pc_pos_valida()
     posicao_escolhida = 0
     posicao_escolhida = random.choice(lista_posicoes_validas)
     for posicao in lista_todas_posicoes:
         if (posicao['id'] == posicao_escolhida):
             posicao['ocupada'] = 1
             posicao['simbolo'] = 'O'
+
+def pc_pos_valida():
+    lista_posicoes_validas.clear()
+    for posicao in lista_todas_posicoes:
+        if(posicao['ocupada'] == 0):
+                lista_posicoes_validas.append(posicao['id'])
 
 def turno_computador(dificuldade):
     """
@@ -26,10 +33,7 @@ def turno_computador(dificuldade):
     3 - Dificil - Joga tentando bloquear o jogador
     """
     #verifica posicoes validas para o computador trabalhar em cima
-    lista_posicoes_validas.clear()
-    for posicao in lista_todas_posicoes:
-        if(posicao['ocupada'] == 0):
-                lista_posicoes_validas.append(posicao['id'])
+    pc_pos_valida()
     match dificuldade:
         case 1: #facil
             pc_modo_facil()
@@ -48,11 +52,11 @@ def turno_computador(dificuldade):
                             lista_comb_possiveis.append(comb['id'])
                     #caso todas as combinações estejam indisponíveis
                     # altera para o computador jogador aleatoriamente
+                    pc_comb_escolhida = 0
                     if (lista_comb_possiveis == []):
-                        dificuldade_computador = 1
+                        pc_modo_facil()
                         break
                     else:
-                        pc_comb_escolhida = 0
                         pc_comb_escolhida = random.choice(lista_comb_possiveis)
                         pc_comb_valida = True
                 
@@ -94,8 +98,6 @@ def turno_computador(dificuldade):
                                         posicao['ocupada'] = 1
                                         posicao['simbolo'] = 'O'
                         break
-            if (dificuldade_computador == 1):
-                pc_modo_facil()
             
         case 3: # dificil 
             print
@@ -232,8 +234,8 @@ z = 0
 while(z < 3):
     turno_computador(dificuldade_computador)
     menu()
-    z += 1
-"""
+    z += 1"""
+
 
 system('cls')
 while(True):
