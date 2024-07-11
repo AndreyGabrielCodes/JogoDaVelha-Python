@@ -170,8 +170,9 @@ def pc_comb_possiveis():
                 comb['valido'] = 1
         numero_combinacao +=1
         
+#cadastro de combinações do computador
 lista_pc_comb = [
-    {'id':1,'comb':'','valido':0,'pos_comb':[1,2,3]},
+    {'id':1,'comb':'','valido':0,'pos_comb':[1,2,3]},#pos_comb são os ids das posicoes
     {'id':2,'comb':'','valido':0,'pos_comb':[4,5,6]},
     {'id':3,'comb':'','valido':0,'pos_comb':[7,8,9]},
     {'id':4,'comb':'','valido':0,'pos_comb':[1,4,7]},

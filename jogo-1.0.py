@@ -35,7 +35,91 @@ def valida_per(text_per, tipo, min=0, max=0):
         except ValueError:
             print('*Tipo de valor inválido')              
 
-def pc_turno(dificuldade):
+def pc_modo_facil():
+    pc_pos_valida()
+    posicao_escolhida = 0
+    posicao_escolhida = random.choice(lista_pos_val_modo_facil)
+    for posicao in lista_todas_posicoes:
+        if (posicao['id'] == posicao_escolhida):
+            posicao['ocupada'] = 1
+            posicao['simbolo'] = 'O'
+
+def pc_pos_valida():
+    lista_pos_val_modo_facil.clear()
+    for posicao in lista_todas_posicoes:
+        if(posicao['ocupada'] == 0):
+                lista_pos_val_modo_facil.append(posicao['id'])
+
+def pc_comb_possiveis():
+    #verifica todas as combinações possives e as retorna na lista "lista_pc_comb"
+    numero_combinacao = 1
+    #limpa combinações armazenadas
+    for comb in lista_pc_comb:
+        comb['comb'] = ''
+        comb['valido'] = 0
+    #verifica combinações e as armezena em cada id de combinação
+    # para depois verificar quais podem ser feitas
+    while(True):
+        match numero_combinacao:
+            #verifica linhas
+            case 1:
+                for posicao in lista_todas_posicoes:
+                    if (posicao['id'] in (1,2,3)):
+                        for comb in lista_pc_comb:
+                            if(comb['id'] == 1):
+                                comb['comb'] += posicao['simbolo']
+            case 2:
+                for posicao in lista_todas_posicoes:
+                    if (posicao['id'] in (4,5,6)):
+                        for comb in lista_pc_comb:
+                            if(comb['id'] == 2):
+                                comb['comb'] += posicao['simbolo']
+            case 3:
+                for posicao in lista_todas_posicoes:
+                    if (posicao['id'] in (7,8,9)):
+                        for comb in lista_pc_comb:
+                            if(comb['id'] == 3):
+                                comb['comb'] += posicao['simbolo']
+            #verifica colunas
+            case 4:
+                for posicao in lista_todas_posicoes:
+                    if (posicao['id'] in (1,4,7)):
+                        for comb in lista_pc_comb:
+                            if(comb['id'] == 4):
+                                comb['comb'] += posicao['simbolo']
+            case 5:
+                for posicao in lista_todas_posicoes:
+                    if (posicao['id'] in (2,5,8)):
+                        for comb in lista_pc_comb:
+                            if(comb['id'] == 5):
+                                comb['comb'] += posicao['simbolo']
+            case 6:
+                for posicao in lista_todas_posicoes:
+                    if (posicao['id'] in (3,6,9)):
+                        for comb in lista_pc_comb:
+                            if(comb['id'] == 6):
+                                comb['comb'] += posicao['simbolo']
+            #verifica diagonais
+            case 7:
+                for posicao in lista_todas_posicoes:
+                    if (posicao['id'] in (1,5,9)):
+                        for comb in lista_pc_comb:
+                            if(comb['id'] == 7):
+                                comb['comb'] += posicao['simbolo']
+            case 8:
+                for posicao in lista_todas_posicoes:
+                    if (posicao['id'] in (3,5,7)):
+                        for comb in lista_pc_comb:
+                            if(comb['id'] == 8):
+                                comb['comb'] += posicao['simbolo']
+            case 10:
+                break
+        for comb in lista_pc_comb:
+            if(comb['comb'] == '   '):
+                comb['valido'] = 1
+        numero_combinacao +=1
+
+def turno_computador(dificuldade):
     """
     Primeiro o computador verifica se o jogador oponente falta uma posicao para fechar uma combinação de vitória
      e o tenta barrar
@@ -46,22 +130,72 @@ def pc_turno(dificuldade):
     3 - Dificil - Joga tentando bloquear o jogador
     """
     #verifica posicoes validas para o computador trabalhar em cima
-    lista_posicoes_validas = []
-    lista_posicoes_validas.clear()
-    for posicao in lista_todas_posicoes:
-        if(posicao['ocupada'] == 0):
-                lista_posicoes_validas.append(posicao['id'])
-
+    
     match dificuldade:
         case 1: #facil
-            posicao_escolhida = 0
-            posicao_escolhida = random.choice(lista_posicoes_validas)
-            for posicao in lista_todas_posicoes:
-                if (posicao['id'] == posicao_escolhida):
-                    posicao['ocupada'] = 1
-                    posicao['simbolo'] = 'O'
+            pc_modo_facil()
         case 2: #medio
-            print
+            while(True):
+                pc_comb_possiveis()
+                global pc_comb_escolhida
+                global pc_comb_valida
+                global dificuldade_computador
+                global id_aleatorio_comp_jog
+                global pc_comb_escolhida
+                lista_comb_possiveis = []
+                #escolhe uma combinação aleatória caso nenhuma outra tenha sido escolhida
+                if ((pc_comb_escolhida == 0) and (pc_comb_valida == False)):
+                    for comb in lista_pc_comb:
+                        if (comb['valido'] == 1):
+                            lista_comb_possiveis.append(comb['id'])
+                    #caso todas as combinações estejam indisponíveis
+                    # altera para o computador jogador aleatoriamente
+                    if (lista_comb_possiveis == []):
+                        pc_modo_facil()
+                        break
+                    else:
+                        pc_comb_escolhida = random.choice(lista_comb_possiveis)
+                        pc_comb_valida = True
+                
+                if ((pc_comb_valida == True) and (dificuldade != 1)):
+                    lista_id_aleatorio = []
+                    #adiciona os ids das posicoes da combinação escolhida a uma lista de posicoes
+                    for comb in lista_pc_comb:
+                        if (comb['id'] == pc_comb_escolhida):
+                            lista_pc_pos_comb_esc = (comb['pos_comb'])
+                    #adiciona os ids das posicoes a um cadastro de preenchimento delas
+                    x = 0
+                    for lista in lista_preenc_pos_comb_esc:
+                        if (lista['ocupada'] == 0):
+                            lista['pos'] = lista_pc_pos_comb_esc[x]
+                        x +=1
+                    #verifica os ids a jogar possiveis e aleatoriza um para jogar
+                    for lista in lista_preenc_pos_comb_esc:
+                        if (lista['ocupada'] == 0):
+                            lista_id_aleatorio.append(lista['pos'])
+                    id_aleatorio_comp_jog = random.choice(lista_id_aleatorio)
+                    #verifica se combinação escolhida ainda é válida
+                    comb_valida = ''
+                    for id_pos in lista_pc_pos_comb_esc:
+                        for posicao in lista_todas_posicoes:
+                            if (posicao['id'] == id_pos):
+                                comb_valida += posicao['simbolo']
+                    if (comb_valida not in ('O  ',' O ','  O','O O','OO ',' OO','   ')):
+                        pc_comb_valida = False
+                        pc_comb_escolhida = 0
+                        lista_comb_possiveis.clear() #ver
+                    else:
+                        #altera o status ocupada do id da combinação a jogar
+                        # depois parte para preencher
+                        for ocupar in lista_preenc_pos_comb_esc:
+                            if (ocupar['pos'] == id_aleatorio_comp_jog):
+                                ocupar['ocupada'] = 1
+                                for posicao in lista_todas_posicoes:
+                                    if (posicao['id'] == id_aleatorio_comp_jog):
+                                        posicao['ocupada'] = 1
+                                        posicao['simbolo'] = 'O'
+                        break
+            
         case 3: # dificil 
             print
 
@@ -181,7 +315,7 @@ def jogador_turno_atual(modo_jogo):
             if (modo_jogo == 1):
                 escolhe_posicao()
             else:
-                pc_turno(dificuldade_computador)
+                turno_computador(dificuldade_computador)
         else:
             jog_ult_jogada = jogador_x[1]
             simbolo_ult_jog = jogador_x[2]
@@ -194,18 +328,6 @@ def escolhe_posicao():
         coluna_escolhida = valida_per(f'{jog_ult_jogada}, escolha uma coluna: ',int,1,3)
         linha_escolhida = valida_per(f'{jog_ult_jogada}, escolha uma linha: ',int,1,3)
         repete_escolha = atribui_posicao(linha_escolhida, coluna_escolhida, simbolo_ult_jog) 
-
-def menu():
-    menu = ''
-    id_posicao = 1
-    lista_exibe_pos = []
-    while(id_posicao < 10):
-        for posicao in lista_todas_posicoes:
-            if (posicao['id'] == id_posicao):
-                lista_exibe_pos.append(posicao['simbolo'])
-        id_posicao += 1
-    menu = f'JOGO DA VELHA 1.0\n\n Coluna x Linha\n      1 2 3  \n    1|{lista_exibe_pos[0]}|{lista_exibe_pos[1]}|{lista_exibe_pos[2]}|\n    2|{lista_exibe_pos[3]}|{lista_exibe_pos[4]}|{lista_exibe_pos[5]}|\n    3|{lista_exibe_pos[6]}|{lista_exibe_pos[7]}|{lista_exibe_pos[8]}|\n'
-    print(menu)
 
 def jogador_inicio_partida(modo_jogo):
     #aleatoriza o jogador que inicia a partida
@@ -224,16 +346,52 @@ def jogador_inicio_partida(modo_jogo):
         simbolo_ult_jog = 'X'
     print(f'{jog_ult_jogada} inicia a partida!\n')
 
+def menu():
+    menu = ''
+    id_posicao = 1
+    lista_exibe_pos = []
+    while(id_posicao < 10):
+        for posicao in lista_todas_posicoes:
+            if (posicao['id'] == id_posicao):
+                lista_exibe_pos.append(posicao['simbolo'])
+        id_posicao += 1
+    menu = f'JOGO DA VELHA 1.0\n\n Coluna x Linha\n      1 2 3  \n    1|{lista_exibe_pos[0]}|{lista_exibe_pos[1]}|{lista_exibe_pos[2]}|\n    2|{lista_exibe_pos[3]}|{lista_exibe_pos[4]}|{lista_exibe_pos[5]}|\n    3|{lista_exibe_pos[6]}|{lista_exibe_pos[7]}|{lista_exibe_pos[8]}|\n'
+    print(menu)
+    print(f'Comb PC esc: {pc_comb_escolhida}') #colocado para testes
+
+#cadastro de combinações do computador
+lista_pc_comb = [
+    {'id':1,'comb':'','valido':0,'pos_comb':[1,2,3]},#pos_comb são os ids das posicoes
+    {'id':2,'comb':'','valido':0,'pos_comb':[4,5,6]},
+    {'id':3,'comb':'','valido':0,'pos_comb':[7,8,9]},
+    {'id':4,'comb':'','valido':0,'pos_comb':[1,4,7]},
+    {'id':5,'comb':'','valido':0,'pos_comb':[2,5,8]},
+    {'id':6,'comb':'','valido':0,'pos_comb':[3,6,9]},
+    {'id':7,'comb':'','valido':0,'pos_comb':[1,5,9]},
+    {'id':8,'comb':'','valido':0,'pos_comb':[3,5,7]}]
+
 #cadastro de posicoes
-lista_todas_posicoes = [{'ocupada':0,'simbolo':' ','linha':1,'coluna':1,'id':1}, 
-                        {'ocupada':0,'simbolo':' ','linha':1,'coluna':2,'id':2}, 
-                        {'ocupada':0,'simbolo':' ','linha':1,'coluna':3,'id':3}, 
-                        {'ocupada':0,'simbolo':' ','linha':2,'coluna':1,'id':4}, 
-                        {'ocupada':0,'simbolo':' ','linha':2,'coluna':2,'id':5}, 
-                        {'ocupada':0,'simbolo':' ','linha':2,'coluna':3,'id':6}, 
-                        {'ocupada':0,'simbolo':' ','linha':3,'coluna':1,'id':7}, 
-                        {'ocupada':0,'simbolo':' ','linha':3,'coluna':2,'id':8}, 
-                        {'ocupada':0,'simbolo':' ','linha':3,'coluna':3,'id':9}]
+lista_todas_posicoes = [
+    {'ocupada':0,'simbolo':' ','linha':1,'coluna':1,'id':1}, 
+    {'ocupada':0,'simbolo':' ','linha':1,'coluna':2,'id':2}, 
+    {'ocupada':0,'simbolo':' ','linha':1,'coluna':3,'id':3}, 
+    {'ocupada':0,'simbolo':' ','linha':2,'coluna':1,'id':4}, 
+    {'ocupada':0,'simbolo':' ','linha':2,'coluna':2,'id':5}, 
+    {'ocupada':0,'simbolo':' ','linha':2,'coluna':3,'id':6}, 
+    {'ocupada':0,'simbolo':' ','linha':3,'coluna':1,'id':7}, 
+    {'ocupada':0,'simbolo':' ','linha':3,'coluna':2,'id':8}, 
+    {'ocupada':0,'simbolo':' ','linha':3,'coluna':3,'id':9}]
+
+#variaveis globais do computador
+pc_comb_escolhida = 0
+pc_comb_valida = False
+lista_pc_pos_comb_esc = []
+id_aleatorio_comp_jog = 0
+lista_pos_val_modo_facil = []
+dificuldade_computador = 1
+lista_preenc_pos_comb_esc = [{'id':1,'pos':0,'ocupada':0},
+                            {'id':2,'pos':0,'ocupada':0},
+                            {'id':3,'pos':0,'ocupada':0}]
 
 #variáveis de jogadores
 jogador_x = [0,'','X',0] #pontuação, nome, simbolo, vitoria (0 e 1)
@@ -244,7 +402,6 @@ jog_ult_jogada = ''
 simbolo_ult_jog = ''
 
 primeira_jogada = True
-dificuldade_computador = 1
 
 resultado = ''
 
@@ -296,6 +453,15 @@ while(True):
     if(reseta_partida == 1):
         reseta_posicoes()
         primeira_jogada = True
+        #resetar variaveis de controle das jogadas do computador
+        pc_comb_escolhida = 0
+        pc_comb_valida = False
+        lista_pc_pos_comb_esc.clear()
+        id_aleatorio_comp_jog = 0
+        lista_pos_val_modo_facil.clear()
+        for resetar in lista_preenc_pos_comb_esc:
+            resetar['pos'] = 0
+            resetar['ocupada'] = 0
         continue
     else:
         break
