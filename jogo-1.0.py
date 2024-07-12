@@ -390,6 +390,47 @@ def jogador_inicio_partida(modo_jogo):
         simbolo_ult_jog = 'X'
     print(f'{jog_ult_jogada} inicia a partida!\n')
 
+def menu_final_jogo():
+    jogador_vencedor = ''
+    pontos_jogador_vencedor = 0
+    dif_empate = False
+    if (jogador_x[0] > jogador_o[0]):
+        jogador_vencedor = jogador_x[1]
+        pontos_jogador_vencedor = jogador_x[0]
+        dif_empate = True
+    elif (jogador_o[0] > jogador_x[0]):
+        jogador_vencedor = jogador_o[1]
+        pontos_jogador_vencedor = jogador_o[0]
+        dif_empate = True
+    else:
+        print(f'Partida de Jogo da Velha não teve vencedores!\n')
+        print(f'Total de pontos feitos de {jogador_x[1]}: {jogador_x[0]} pontos')
+        print(f'Total de pontos feitos de {jogador_o[1]}: {jogador_o[0]} pontos\n')
+    if (dif_empate):
+        system('cls')
+        print(f'Parabéns {jogador_vencedor}!!!\n')
+        print(f'Partida de Jogo da Velha foi vencida por {jogador_vencedor}!\n')
+        print(f'Total de pontos feitos: {pontos_jogador_vencedor} pontos\n')
+    
+
+def menu_final_rodada():
+    global jogador_x
+    global jogador_o
+    global resultado
+    system('cls')
+    menu()
+    if((jogador_x[3] == 0) and (jogador_o[3] == 0)):
+        resultado = ('Empate! Nenhum jogador ganhou')
+    else:
+        if (jogador_x[3] == 1):
+            resultado = (f'Vitoria de {jogador_x[1]} que escolheu {jogador_x[2]}!')
+            jogador_x[0] += 1
+        else:
+            resultado = (f'Vitoria de {jogador_o[1]} que escolheu {jogador_o[2]}!')
+            jogador_o[0] += 1
+    print(f'| Resultado da partida: {resultado}\n')
+    print(f'| Pontuações:\n| - {jogador_x[1]}: {jogador_x[0]}\n| - {jogador_o[1]}: {jogador_o[0]}')
+
 def menu():
     menu = ''
     id_posicao = 1
@@ -425,7 +466,6 @@ lista_pc_comb = [
     {'id':6,'comb':'','valido':0,'pos_comb':[3,6,9]},
     {'id':7,'comb':'','valido':0,'pos_comb':[1,5,9]},
     {'id':8,'comb':'','valido':0,'pos_comb':[3,5,7]}]
-
 #cadastro de posicoes
 lista_todas_posicoes = [
     {'ocupada':0,'simbolo':' ','linha':1,'coluna':1,'id':1}, 
@@ -437,11 +477,9 @@ lista_todas_posicoes = [
     {'ocupada':0,'simbolo':' ','linha':3,'coluna':1,'id':7}, 
     {'ocupada':0,'simbolo':' ','linha':3,'coluna':2,'id':8}, 
     {'ocupada':0,'simbolo':' ','linha':3,'coluna':3,'id':9}]
-
 #variáveis de jogadores
 jogador_x = [0,'','X',0] #pontuação, nome, simbolo, vitoria (0 e 1)
 jogador_o = [0,'','O',0]
-
 #controles globais de jogada
 jog_ult_jogada = ''
 simbolo_ult_jog = ''
@@ -475,28 +513,17 @@ while(True):
     system('cls')
     jogador_inicio_partida(modo_jogo)
     input('Enter para iniciar partida')
+    #estrutura de repetição da jogada
     while(status_partida() == 0): #repetirá enquanto a partida estiver com status de jogo acontecendo
         system('cls')
         menu()
         jogador_turno_atual(modo_jogo)
-    system('cls')
-    menu()
-    if((jogador_x[3] == 0) and (jogador_o[3] == 0)):
-        resultado = ('Empate! Nenhum jogador ganhou')
-    else:
-        if (jogador_x[3] == 1):
-            resultado = (f'Vitoria de {jogador_x[1]} que escolheu {jogador_x[2]}!')
-            jogador_x[0] += 1
-        else:
-            resultado = (f'Vitoria de {jogador_o[1]} que escolheu {jogador_o[2]}!')
-            jogador_o[0] += 1
-    print(f'| Resultado da partida: {resultado}\n')
-    print(f'| Pontuações:\n| - {jogador_x[1]}: {jogador_x[0]}\n| - {jogador_o[1]}: {jogador_o[0]}')
+    #estrutura após a finalização da partida
+    menu_final_rodada()
     resetar_partida = valida_per('\nDeseja iniciar uma nova partida ? (1/0): ','menu',0,1)
     if(resetar_partida == 1):
         reseta_partida()
         continue
     else:
+        menu_final_jogo()
         break
-system('cls')
-print('Jogo finalizado, obrigado por jogar !')
