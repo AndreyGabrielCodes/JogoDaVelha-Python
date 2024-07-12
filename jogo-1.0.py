@@ -44,7 +44,7 @@ def pc_modo_facil():
             posicao['ocupada'] = 1
             posicao['simbolo'] = 'O'
 
-def pc_modo_medio(dificuldade):
+def pc_modo_medio():
     while(True):
         global pc_comb_escolhida
         global pc_comb_valida
@@ -125,6 +125,65 @@ def pc_modo_medio(dificuldade):
                                 posicao['ocupada'] = 1
                                 posicao['simbolo'] = 'O'
                 break
+
+def pc_modo_dificil():
+    id_pri_pos = 0
+    id_seg_pos = 0
+    #verifica se é a primeira jogada
+    nro_pos_jogx = 0
+    for posicao in lista_todas_posicoes:
+        if((posicao['ocupada'] == 1) and (posicao['simbolo'] == 'X')):
+            nro_pos_jogx += 1
+            if(id_pri_pos == 0):
+                id_pri_pos = posicao['id']
+            else:
+                id_seg_pos = posicao['id']
+    #primeira jogada do computador a partir da posicão que o jogador colocou
+    if (nro_pos_jogx == 1):
+        #jogador inicia pelo meio
+        if (id_pri_pos == 5):
+            for posicao in lista_todas_posicoes:
+                if (posicao['id'] == 3):
+                    posicao['ocupada'] = 1
+                    posicao['simbolo'] = 'O'
+        #jogador inicia pelos cantos
+        elif  (id_pri_pos in (1,3,7,9)):
+            for posicao in lista_todas_posicoes:
+                if (posicao['id'] == 5):
+                    posicao['ocupada'] = 1
+                    posicao['simbolo'] = 'O'
+        #jogador inicia pelas posicoes ao redor do centro
+        elif (id_pri_pos in (2,4,6,8)):
+            match id_pri_pos:
+                case 2:
+                    for posicao in lista_todas_posicoes:
+                        if (posicao['id'] == 3):
+                            posicao['ocupada'] = 1
+                            posicao['simbolo'] = 'O'
+                case 4:
+                    for posicao in lista_todas_posicoes:
+                        if (posicao['id'] == 7):
+                            posicao['ocupada'] = 1
+                            posicao['simbolo'] = 'O'
+                case 6:
+                    for posicao in lista_todas_posicoes:
+                        if (posicao['id'] == 9):
+                            posicao['ocupada'] = 1
+                            posicao['simbolo'] = 'O'
+                case 8:
+                    for posicao in lista_todas_posicoes:
+                        if (posicao['id'] == 9):
+                            posicao['ocupada'] = 1
+                            posicao['simbolo'] = 'O'
+    elif (nro_pos_jogx == 2):
+        if (id_pri_pos in (1,3,7,9)):
+            if (id_pri_pos == 1 and id_seg_pos == 9):
+                for posicao in lista_todas_posicoes:
+                    if (posicao['id'] == 8):
+                        posicao['ocupada'] = 1
+                        posicao['simbolo'] = 'O'
+    else:
+        pc_modo_medio()
 
 def pc_pos_valida():
     lista_pos_val_modo_facil.clear()
@@ -212,15 +271,13 @@ def turno_computador(dificuldade):
     2 - Medio - Joga para formar combinações
     3 - Dificil - Joga tentando bloquear o jogador e forçando empate
     """
-    #verifica posicoes validas para o computador trabalhar em cima
-    
     match dificuldade:
         case 1: #facil
             pc_modo_facil()
         case 2: #medio
-            pc_modo_medio(dificuldade)
+            pc_modo_medio()
         case 3: # dificil 
-            print
+            pc_modo_dificil()
 
 def reseta_partida():
     global pc_comb_escolhida
@@ -254,6 +311,9 @@ def status_partida():
         #status = 0 = jogo acontecendo
         #status = 1 = empate
         #status = 2 = vitoria
+    """
+    #tentar criar um for dentro de um for para otimizar a função
+    """
     numero_combinacao = 1
     while(True):
         combinacao_feita = ''
@@ -347,7 +407,7 @@ def jogador_turno_atual(modo_jogo):
     global dificuldade_computador
     #verifica se é a primeira jogada para manter o jogador que foi selecionado pela função "jogador_inicio_partida" 
     # ou se o modo é "jogador x computador" para sempre começar com o jogador
-    if (((modo_jogo in (1,2)) and (primeira_jogada == True)) or ((modo_jogo == 1) and (primeira_jogada == True))):
+    if (((modo_jogo in (1,2)) and (primeira_jogada == True))):
         escolhe_posicao()
         primeira_jogada = False
     #modo jogador x jogador - altera o jogador conforme o ultimo que jogou
@@ -394,6 +454,7 @@ def menu_final_jogo():
     jogador_vencedor = ''
     pontos_jogador_vencedor = 0
     dif_empate = False
+    system('cls')
     if (jogador_x[0] > jogador_o[0]):
         jogador_vencedor = jogador_x[1]
         pontos_jogador_vencedor = jogador_x[0]
@@ -412,7 +473,6 @@ def menu_final_jogo():
         print(f'Partida de Jogo da Velha foi vencida por {jogador_vencedor}!\n')
         print(f'Total de pontos feitos: {pontos_jogador_vencedor} pontos\n')
     
-
 def menu_final_rodada():
     global jogador_x
     global jogador_o
@@ -432,16 +492,24 @@ def menu_final_rodada():
     print(f'| Pontuações:\n| - {jogador_x[1]}: {jogador_x[0]}\n| - {jogador_o[1]}: {jogador_o[0]}')
 
 def menu():
-    menu = ''
     id_posicao = 1
     lista_exibe_pos = []
-    while(id_posicao < 10):
+    for i in range(1,11,1):
         for posicao in lista_todas_posicoes:
             if (posicao['id'] == id_posicao):
                 lista_exibe_pos.append(posicao['simbolo'])
         id_posicao += 1
-    menu = f'JOGO DA VELHA 1.0\n\n Coluna x Linha\n      1 2 3  \n    1|{lista_exibe_pos[0]}|{lista_exibe_pos[1]}|{lista_exibe_pos[2]}|\n    2|{lista_exibe_pos[3]}|{lista_exibe_pos[4]}|{lista_exibe_pos[5]}|\n    3|{lista_exibe_pos[6]}|{lista_exibe_pos[7]}|{lista_exibe_pos[8]}|\n'
-    print(menu)
+    print('JOGO DA VELHA 1.0\n Coluna x Linha\n')
+    quebra_linha = 0
+    for simbolo in lista_exibe_pos:
+        if(quebra_linha == 3):
+            quebra_linha = 0
+            print('\r')
+        if(quebra_linha == 0):
+            print('    |', end='')
+        print(f'{simbolo}|', end='')
+        quebra_linha += 1
+    print('\n')
     
 #variaveis globais do computador
 pc_comb_escolhida = 0
@@ -491,24 +559,26 @@ import random
 
 #programa principal
 system('cls')
-print('|      JOGO DA VELHA       |')
-print('|                          |')
-print('|       MODO DE JOGO       |')
-print('| 1 - Jogador x Jogador    |')
-print('| 2 - Jogador x Computador |\n')
+print('|        JOGO DA VELHA        |')
+print('|                             |')
+print('|        MODOS DE JOGO        |')
+print('| 1 - Jogador x Jogador       |')
+print('| 2 - Jogador x Computador    |\n')
 modo_jogo = valida_per('Escolha um modo de jogo: ','menu',1,2)
-if(modo_jogo == 1):
-    jogador_x[1] = valida_per('\n| Nome do Jogador que será o X: ',str)
-    jogador_o[1] = valida_per('| Nome do Jogador que será o O: ',str)
-else:
-    system('cls')
-    print('| DIFICULDADE |')
-    print('| 1 - Fácil   |')
-    print('| 2 - Médio   |')
-    print('| 3 - Dificil |\n')
-    dificuldade_computador = valida_per('Escolha um modo de jogo: ','menu',1,3)
-    jogador_x[1] = valida_per('\n| Nome do Jogador que será o X: ',str)
-    jogador_o[1] = 'Computador'
+match modo_jogo:
+    case 1:
+        jogador_x[1] = valida_per('\n| Nome do Jogador que será o X: ',str)
+        jogador_o[1] = valida_per('| Nome do Jogador que será o O: ',str)
+    case 2:
+        system('cls')
+        print('| DIFICULDADE |')
+        print('| 1 - Fácil   |')
+        print('| 2 - Médio   |')
+        print('| 3 - Dificil |\n')
+        dificuldade_computador = valida_per('Escolha um modo de jogo: ','menu',1,3)
+        jogador_x[1] = valida_per('\n| Nome do Jogador que será o X: ',str)
+        jogador_o[1] = 'Computador'
+
 while(True):
     system('cls')
     jogador_inicio_partida(modo_jogo)
