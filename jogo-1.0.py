@@ -36,7 +36,12 @@ def valida_per(text_per, tipo, min=0, max=0):
             print('*Tipo de valor inválido')              
 
 def pc_modo_facil():
-    pc_pos_valida()
+    #lista todas as posições disponíveis para o modo jogar
+    lista_pos_val_modo_facil.clear()
+    for posicao in lista_todas_posicoes:
+        if(posicao['ocupada'] == 0):
+                lista_pos_val_modo_facil.append(posicao['id'])
+    #escolhe aleatoriamente uma das posições e joga
     posicao_escolhida = 0
     posicao_escolhida = random.choice(lista_pos_val_modo_facil)
     for posicao in lista_todas_posicoes:
@@ -127,29 +132,29 @@ def pc_modo_medio():
                 break
 
 def pc_modo_dificil():
-    id_pri_pos = 0
-    id_seg_pos = 0
-    id_ter_pos = 0
-    #verifica se é a primeira jogada
-    nro_pos_jogx = 0
+    id_jog_usu = [] #recebe até 3 jogadas
+    num_jog_usu = 0
+
+    #insere o id das posicoes das 3 primeiras jogadas do jogador
     for posicao in lista_todas_posicoes:
         if((posicao['ocupada'] == 1) and (posicao['simbolo'] == 'X')):
-            nro_pos_jogx += 1
-            if(id_pri_pos == 0):
-                id_pri_pos = posicao['id']
-            elif(id_seg_pos == 0):
-                id_seg_pos = posicao['id']
-            else:
-                id_ter_pos = posicao['id']
+            num_jog_usu += 1
+            if(num_jog_usu < 3):
+                id_jog_usu.append(posicao['id'])
 
-    #aperfeiçoar modo médio para dar preferencia para combinações que já tenham preenchimento
-    pc_modo_medio()
-
-def pc_pos_valida():
-    lista_pos_val_modo_facil.clear()
-    for posicao in lista_todas_posicoes:
-        if(posicao['ocupada'] == 0):
-                lista_pos_val_modo_facil.append(posicao['id'])
+def pc_turno(dificuldade):
+    """
+    1 - Facil - Joga em posicoes aleatórias
+    2 - Medio - Joga para formar combinações
+    3 - Dificil - Joga tentando bloquear o jogador e forçando empate
+    """
+    match dificuldade:
+        case 1: #facil
+            pc_modo_facil()
+        case 2: #medio
+            pc_modo_medio()
+        case 3: # dificil 
+            pc_modo_dificil()
 
 def pc_comb_possiveis():
     #verifica todas as combinações possives e as retorna na lista "lista_pc_comb"
@@ -236,24 +241,6 @@ def pc_comb_possiveis():
                     comb['valido'] = 1
         #passa para a próxima combinação a verificar
         numero_combinacao +=1
-
-def turno_computador(dificuldade):
-    """
-    Primeiro o computador verifica se o jogador oponente falta uma posicao para fechar uma combinação de vitória
-     e o tenta barrar
-    Caso não, verifica combinações possíveis, escolhe uma, e começa a completá-la
-    Dificuldades:
-    1 - Facil - Joga em posicoes aleatórias
-    2 - Medio - Joga para formar combinações
-    3 - Dificil - Joga tentando bloquear o jogador e forçando empate
-    """
-    match dificuldade:
-        case 1: #facil
-            pc_modo_facil()
-        case 2: #medio
-            pc_modo_medio()
-        case 3: # dificil 
-            pc_modo_dificil()
 
 def reseta_partida():
     global pc_comb_escolhida
@@ -395,7 +382,7 @@ def jogador_turno_atual(modo_jogo):
             if (modo_jogo == 1):
                 escolhe_posicao()
             else:
-                turno_computador(dificuldade_computador)
+                pc_turno(dificuldade_computador)
         else:
             jog_ult_jogada = jogador_x[1]
             simbolo_ult_jog = jogador_x[2]
@@ -452,7 +439,7 @@ def menu_final_jogo():
 def menu_final_rodada():
     global jogador_x
     global jogador_o
-    global resultado
+    resultado = ''
     system('cls')
     menu()
     if((jogador_x[3] == 0) and (jogador_o[3] == 0)):
@@ -528,48 +515,50 @@ jogador_o = [0,'','O',0]
 jog_ult_jogada = ''
 simbolo_ult_jog = ''
 primeira_jogada = True
-resultado = ''
 
 from os import system
 import random
 
-#programa principal
-system('cls')
-print('|        JOGO DA VELHA        |')
-print('|                             |')
-print('|        MODOS DE JOGO        |')
-print('| 1 - Jogador x Jogador       |')
-print('| 2 - Jogador x Computador    |\n')
-modo_jogo = valida_per('Escolha um modo de jogo: ','menu',1,2)
-match modo_jogo:
-    case 1:
-        jogador_x[1] = valida_per('\n| Nome do Jogador que será o X: ',str)
-        jogador_o[1] = valida_per('| Nome do Jogador que será o O: ',str)
-    case 2:
-        system('cls')
-        print('| DIFICULDADE |')
-        print('| 1 - Fácil   |')
-        print('| 2 - Médio   |')
-        print('| 3 - Dificil |\n')
-        dificuldade_computador = valida_per('Escolha um modo de jogo: ','menu',1,3)
-        jogador_x[1] = valida_per('\n| Nome do Jogador que será o X: ',str)
-        jogador_o[1] = 'Computador'
-
-while(True):
+def main():
+    #programa principal
     system('cls')
-    jogador_inicio_partida(modo_jogo)
-    input('Enter para iniciar partida')
-    #estrutura de repetição da jogada
-    while(status_partida() == 0): #repetirá enquanto a partida estiver com status de jogo acontecendo
+    print('|        JOGO DA VELHA        |')
+    print('|                             |')
+    print('|        MODOS DE JOGO        |')
+    print('| 1 - Jogador x Jogador       |')
+    print('| 2 - Jogador x Computador    |\n')
+    modo_jogo = valida_per('Escolha um modo de jogo: ','menu',1,2)
+    match modo_jogo:
+        case 1:
+            jogador_x[1] = valida_per('\n| Nome do Jogador que será o X: ',str)
+            jogador_o[1] = valida_per('| Nome do Jogador que será o O: ',str)
+        case 2:
+            system('cls')
+            print('| DIFICULDADE |')
+            print('| 1 - Fácil   |')
+            print('| 2 - Médio   |')
+            print('| 3 - Dificil |\n')
+            dificuldade_computador = valida_per('Escolha um modo de jogo: ','menu',1,3)
+            jogador_x[1] = valida_per('\n| Nome do Jogador que será o X: ',str)
+            jogador_o[1] = 'Computador'
+
+    while(True):
         system('cls')
-        menu()
-        jogador_turno_atual(modo_jogo)
-    #estrutura após a finalização da partida
-    menu_final_rodada()
-    resetar_partida = valida_per('\nDeseja iniciar uma nova partida ? (1/0): ','menu',0,1)
-    if(resetar_partida == 1):
-        reseta_partida()
-        continue
-    else:
-        menu_final_jogo()
-        break
+        jogador_inicio_partida(modo_jogo)
+        input('Enter para iniciar partida')
+        #estrutura de repetição da jogada
+        while(status_partida() == 0): #repetirá enquanto a partida estiver com status de jogo acontecendo
+            system('cls')
+            menu()
+            jogador_turno_atual(modo_jogo)
+        #estrutura após a finalização da partida
+        menu_final_rodada()
+        resetar_partida = valida_per('\nDeseja iniciar uma nova partida ? (1/0): ','menu',0,1)
+        if(resetar_partida == 1):
+            reseta_partida()
+            continue
+        else:
+            menu_final_jogo()
+            break
+
+main()
