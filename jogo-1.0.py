@@ -247,25 +247,28 @@ def status_partida():
             return status
     return status 
 
-def atribui_posicao(linha, coluna, simbolo):
-    valido = False
-    posicao_ocupada = 0
-    for posicao in lista_todas_posicoes:
-        if ((posicao['linha'] == linha) and (posicao['coluna'] == coluna)):
-            posicao_ocupada = posicao['ocupada']
-    if (posicao_ocupada == 1):
-        system('cls')
-        menu()
-        print('*Posição escolhida está ocupada! Tente novamente\n')
+def escolhe_posicao():
+   valido = False
+   #repete a escolha das posicoes conforme retorno true ou false da função "atribui_posicao"
+   while(valido == False):
+        coluna_escolhida = valida_per(f'{jog_ult_jogada}, escolha uma coluna: ',int,1,3)
+        linha_escolhida = valida_per(f'{jog_ult_jogada}, escolha uma linha: ',int,1,3)
         valido = False
-    else:
+        posicao_ocupada = 0
         for posicao in lista_todas_posicoes:
-            if ((posicao['linha'] == linha) and (posicao['coluna'] == coluna)):
-                posicao['ocupada'] = 1
-                posicao['simbolo'] = simbolo
-        print('Posição escolhida com sucesso!')
-        valido = True
-    return valido
+            if ((posicao['linha'] == linha_escolhida) and (posicao['coluna'] == coluna_escolhida)):
+                posicao_ocupada = posicao['ocupada']
+        if (posicao_ocupada == 1):
+            system('cls')
+            menu()
+            print('*Posição escolhida está ocupada! Tente novamente\n')
+            valido = False
+        else:
+            for posicao in lista_todas_posicoes:
+                if ((posicao['linha'] == linha_escolhida) and (posicao['coluna'] == coluna_escolhida)):
+                    posicao['ocupada'] = 1
+                    posicao['simbolo'] = simbolo_ult_jog
+            valido = True
 
 def jogador_turno_atual(modo_jogo):
     global jogador_x
@@ -293,14 +296,6 @@ def jogador_turno_atual(modo_jogo):
             jog_ult_jogada = jogador_x[1]
             simbolo_ult_jog = jogador_x[2]
             escolhe_posicao()
-
-def escolhe_posicao():
-   repete_escolha = False
-   #repete a escolha das posicoes conforme retorno true ou false da função "atribui_posicao"
-   while(repete_escolha == False):
-        coluna_escolhida = valida_per(f'{jog_ult_jogada}, escolha uma coluna: ',int,1,3)
-        linha_escolhida = valida_per(f'{jog_ult_jogada}, escolha uma linha: ',int,1,3)
-        repete_escolha = atribui_posicao(linha_escolhida, coluna_escolhida, simbolo_ult_jog) 
 
 def jogador_inicio_partida(modo_jogo):
     #aleatoriza o jogador que inicia a partida
