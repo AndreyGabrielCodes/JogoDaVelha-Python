@@ -57,7 +57,7 @@ def pc_modo_medio():
         global id_aleatorio_comp_jog
         global pc_comb_escolhida
         lista_comb_possiveis.clear()
-        pc_comb_possiveis()
+        pc_comb()
         #gera combinações possíveis
         for comb in lista_pc_comb:
             if (comb['valido'] == 1):
@@ -156,91 +156,42 @@ def pc_turno(dificuldade):
         case 3: # dificil 
             pc_modo_dificil()
 
-def pc_comb_possiveis():
-    #verifica todas as combinações possives e as retorna na lista "lista_pc_comb"
-    numero_combinacao = 1
-    #limpa combinações armazenadas
+def pc_comb():
+    #limpa combinações possíveis anteriores
     for comb in lista_pc_comb:
         comb['comb'] = ''
         comb['valido'] = 0
-    #verifica combinações e as armezena em cada id de combinação
-    # para depois verificar quais podem ser feitas
-    while(True):
-        match numero_combinacao:
-            #verifica linhas
-            case 1:
-                for posicao in lista_todas_posicoes:
-                    if (posicao['id'] in (1,2,3)):
-                        for comb in lista_pc_comb:
-                            if(comb['id'] == 1):
-                                comb['comb'] += posicao['simbolo']
-            case 2:
-                for posicao in lista_todas_posicoes:
-                    if (posicao['id'] in (4,5,6)):
-                        for comb in lista_pc_comb:
-                            if(comb['id'] == 2):
-                                comb['comb'] += posicao['simbolo']
-            case 3:
-                for posicao in lista_todas_posicoes:
-                    if (posicao['id'] in (7,8,9)):
-                        for comb in lista_pc_comb:
-                            if(comb['id'] == 3):
-                                comb['comb'] += posicao['simbolo']
-            #verifica colunas
-            case 4:
-                for posicao in lista_todas_posicoes:
-                    if (posicao['id'] in (1,4,7)):
-                        for comb in lista_pc_comb:
-                            if(comb['id'] == 4):
-                                comb['comb'] += posicao['simbolo']
-            case 5:
-                for posicao in lista_todas_posicoes:
-                    if (posicao['id'] in (2,5,8)):
-                        for comb in lista_pc_comb:
-                            if(comb['id'] == 5):
-                                comb['comb'] += posicao['simbolo']
-            case 6:
-                for posicao in lista_todas_posicoes:
-                    if (posicao['id'] in (3,6,9)):
-                        for comb in lista_pc_comb:
-                            if(comb['id'] == 6):
-                                comb['comb'] += posicao['simbolo']
-            #verifica diagonais
-            case 7:
-                for posicao in lista_todas_posicoes:
-                    if (posicao['id'] in (1,5,9)):
-                        for comb in lista_pc_comb:
-                            if(comb['id'] == 7):
-                                comb['comb'] += posicao['simbolo']
-            case 8:
-                for posicao in lista_todas_posicoes:
-                    if (posicao['id'] in (3,5,7)):
-                        for comb in lista_pc_comb:
-                            if(comb['id'] == 8):
-                                comb['comb'] += posicao['simbolo']
-            case 10:
-                break
-        #computador considera primeiro as combinações que já ocupou
-        #verifica combinações em que o PC já tenha ocupado duas posicões
-        comb_ocup_dois = False
+    #verifica cada "pos_comb" de "lista_pc_comb" e atribui o simbolo
+    # de cada id de posicao de "lista_todas_posicoes"
+    for pc_comb in lista_pc_comb:
+        comb_atual = ''
+        comb_atual = pc_comb['pos_comb']
+        id_comb_atual = pc_comb['id']
+        for posicao in lista_todas_posicoes:
+            if(posicao['id'] in comb_atual):
+                for pc_comb in lista_pc_comb:
+                    if(pc_comb['id'] == id_comb_atual):
+                        pc_comb['comb'] += posicao['simbolo']
+    
+    #computador considera primeiro as combinações que já ocupou
+    #verifica combinações em que o PC já tenha ocupado duas posicões
+    comb_ocup_dois = False
+    for comb in lista_pc_comb:
+        if(comb['comb'] in ('O O','OO ',' OO')):
+            comb['valido'] = 1
+            comb_ocup_dois = True
+    #verifica combinações em que o PC já tenha ocupado uma posicão
+    comb_ocup_um = False
+    if (comb_ocup_dois == False):
         for comb in lista_pc_comb:
-            if(comb['comb'] in ('O O','OO ',' OO')):
+            if(comb['comb'] in ('O  ',' O ','  O')):
                 comb['valido'] = 1
-                comb_ocup_dois = True
-        #verifica combinações em que o PC já tenha ocupado uma posicão
-        comb_ocup_um = False
-        if (comb_ocup_dois == False):
-            for comb in lista_pc_comb:
-                if(comb['comb'] in ('O  ',' O ','  O')):
-                    comb['valido'] = 1
-                    comb_ocup_um = True
-        #verifica combinações em que o PC não tenha ocupado posicão
-        if (comb_ocup_um == False and comb_ocup_dois == False):
-            for comb in lista_pc_comb:
-                if(comb['comb'] in ('   ')):
-                    comb['valido'] = 1
-        #passa para a próxima combinação a verificar
-        numero_combinacao +=1
+                comb_ocup_um = True
+    #verifica combinações em que o PC não tenha ocupado posicão
+    if (comb_ocup_um == False and comb_ocup_dois == False):
+        for comb in lista_pc_comb:
+            if(comb['comb'] in ('   ')):
+                comb['valido'] = 1
 
 def reseta_partida():
     global pc_comb_escolhida
@@ -270,76 +221,31 @@ def reseta_partida():
         resetar['ocupada'] = 0
 
 def status_partida():
-    status = 0 #status da partida
-        #status = 0 = jogo acontecendo
-        #status = 1 = empate
-        #status = 2 = vitoria
-    """
-    #tentar criar um for dentro de um for para otimizar a função
-    """
-    numero_combinacao = 1
-    while(True):
-        combinacao_feita = ''
-        posicoes_ocupadas = 0
-        match numero_combinacao:
-            #verifica linhas
-            case 1:
-                for posicao in lista_todas_posicoes:
-                    if ((posicao['id'] in (1,2,3)) and posicao['simbolo'] in ('X','O')):
-                        combinacao_feita += posicao['simbolo']
-            case 2:
-                for posicao in lista_todas_posicoes:
-                    if ((posicao['id'] in (4,5,6)) and posicao['simbolo'] in ('X','O')):
-                        combinacao_feita += posicao['simbolo']
-            case 3:
-                for posicao in lista_todas_posicoes:
-                    if ((posicao['id'] in (7,8,9)) and posicao['simbolo'] in ('X','O')):
-                        combinacao_feita += posicao['simbolo']
-            #verifica colunas
-            case 4:
-                for posicao in lista_todas_posicoes:
-                    if ((posicao['id'] in (1,4,7)) and posicao['simbolo'] in ('X','O')):
-                        combinacao_feita += posicao['simbolo']
-            case 5:
-                for posicao in lista_todas_posicoes:
-                    if ((posicao['id'] in (2,5,8)) and posicao['simbolo'] in ('X','O')):
-                        combinacao_feita += posicao['simbolo']
-            case 6:
-                for posicao in lista_todas_posicoes:
-                    if ((posicao['id'] in (3,6,9)) and posicao['simbolo'] in ('X','O')):
-                        combinacao_feita += posicao['simbolo']
-            #verifica diagonais
-            case 7:
-                for posicao in lista_todas_posicoes:
-                    if ((posicao['id'] in (1,5,9)) and posicao['simbolo'] in ('X','O')):
-                        combinacao_feita += posicao['simbolo']
-            case 8:
-                for posicao in lista_todas_posicoes:
-                    if ((posicao['id'] in (3,5,7)) and posicao['simbolo'] in ('X','O')):
-                        combinacao_feita += posicao['simbolo']
-            case 9:
-            #todas posicoes ocupadas
-                for posicao in lista_todas_posicoes:
-                    if (posicao['ocupada'] == 1):
-                        posicoes_ocupadas += 1
-            case 10:
-                break
-
-        if (combinacao_feita in ('XXX','OOO')):
-            if(combinacao_feita == 'XXX'):
-                jogador_x[3] = 1
-                status = 2
-                break
-            else:
-                jogador_o[3] = 1
-                status = 2
-                break
-        elif (posicoes_ocupadas == 9):
+    status = 0 #status: 0 - jogo acontecendo | 1 - empate | 2 - vitória
+    comb_pos = [
+        [1,2,3],[4,5,6],[7,8,9],#verifica linhas
+        [1,4,7],[2,5,8],[3,6,9],#verifica colunas
+        [1,5,9],[3,5,7],        #verifica diagonais
+        [1,2,3,4,5,6,7,8,9]]    #verifica todas as posicoes
+    for comb in comb_pos:
+        comb_ocup = 0
+        comb_feita = ''
+        for posicao in lista_todas_posicoes:
+            if(posicao['id'] in comb and posicao['simbolo'] in ('X','O')):
+                comb_feita += posicao['simbolo']
+                comb_ocup += 1
+        if (comb_feita == 'XXX'):
+            jogador_x[3] = 1
+            status = 2
+            return status
+        elif(comb_feita == 'OOO'):
+            jogador_o[3] = 1
+            status = 2
+            return status
+        elif(comb_ocup == 9):
             status = 1
-            break
-        else:
-            numero_combinacao += 1
-    return status
+            return status
+    return status 
 
 def atribui_posicao(linha, coluna, simbolo):
     valido = False
