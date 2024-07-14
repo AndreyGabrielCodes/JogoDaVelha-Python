@@ -129,6 +129,7 @@ def pc_modo_medio():
 def pc_modo_dificil():
     id_pri_pos = 0
     id_seg_pos = 0
+    id_ter_pos = 0
     #verifica se é a primeira jogada
     nro_pos_jogx = 0
     for posicao in lista_todas_posicoes:
@@ -136,54 +137,13 @@ def pc_modo_dificil():
             nro_pos_jogx += 1
             if(id_pri_pos == 0):
                 id_pri_pos = posicao['id']
-            else:
+            elif(id_seg_pos == 0):
                 id_seg_pos = posicao['id']
-    #primeira jogada do computador a partir da posicão que o jogador colocou
-    if (nro_pos_jogx == 1):
-        #jogador inicia pelo meio
-        if (id_pri_pos == 5):
-            for posicao in lista_todas_posicoes:
-                if (posicao['id'] == 3):
-                    posicao['ocupada'] = 1
-                    posicao['simbolo'] = 'O'
-        #jogador inicia pelos cantos
-        elif  (id_pri_pos in (1,3,7,9)):
-            for posicao in lista_todas_posicoes:
-                if (posicao['id'] == 5):
-                    posicao['ocupada'] = 1
-                    posicao['simbolo'] = 'O'
-        #jogador inicia pelas posicoes ao redor do centro
-        elif (id_pri_pos in (2,4,6,8)):
-            match id_pri_pos:
-                case 2:
-                    for posicao in lista_todas_posicoes:
-                        if (posicao['id'] == 3):
-                            posicao['ocupada'] = 1
-                            posicao['simbolo'] = 'O'
-                case 4:
-                    for posicao in lista_todas_posicoes:
-                        if (posicao['id'] == 7):
-                            posicao['ocupada'] = 1
-                            posicao['simbolo'] = 'O'
-                case 6:
-                    for posicao in lista_todas_posicoes:
-                        if (posicao['id'] == 9):
-                            posicao['ocupada'] = 1
-                            posicao['simbolo'] = 'O'
-                case 8:
-                    for posicao in lista_todas_posicoes:
-                        if (posicao['id'] == 9):
-                            posicao['ocupada'] = 1
-                            posicao['simbolo'] = 'O'
-    elif (nro_pos_jogx == 2):
-        if (id_pri_pos in (1,3,7,9)):
-            if (id_pri_pos == 1 and id_seg_pos == 9):
-                for posicao in lista_todas_posicoes:
-                    if (posicao['id'] == 8):
-                        posicao['ocupada'] = 1
-                        posicao['simbolo'] = 'O'
-    else:
-        pc_modo_medio()
+            else:
+                id_ter_pos = posicao['id']
+
+    #aperfeiçoar modo médio para dar preferencia para combinações que já tenham preenchimento
+    pc_modo_medio()
 
 def pc_pos_valida():
     lista_pos_val_modo_facil.clear()
@@ -255,10 +215,26 @@ def pc_comb_possiveis():
                                 comb['comb'] += posicao['simbolo']
             case 10:
                 break
+        #computador considera primeiro as combinações que já ocupou
+        #verifica combinações em que o PC já tenha ocupado duas posicões
+        comb_ocup_dois = False
         for comb in lista_pc_comb:
-            if(comb['comb'] in ('O  ',' O ','  O','O O','OO ',' OO','   ')):
-            #if(comb['comb'] == '   '):
+            if(comb['comb'] in ('O O','OO ',' OO')):
                 comb['valido'] = 1
+                comb_ocup_dois = True
+        #verifica combinações em que o PC já tenha ocupado uma posicão
+        comb_ocup_um = False
+        if (comb_ocup_dois == False):
+            for comb in lista_pc_comb:
+                if(comb['comb'] in ('O  ',' O ','  O')):
+                    comb['valido'] = 1
+                    comb_ocup_um = True
+        #verifica combinações em que o PC não tenha ocupado posicão
+        if (comb_ocup_um == False and comb_ocup_dois == False):
+            for comb in lista_pc_comb:
+                if(comb['comb'] in ('   ')):
+                    comb['valido'] = 1
+        #passa para a próxima combinação a verificar
         numero_combinacao +=1
 
 def turno_computador(dificuldade):
