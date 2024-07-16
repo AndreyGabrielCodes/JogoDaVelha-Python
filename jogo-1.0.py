@@ -35,25 +35,21 @@ def valida_per(text_per, tipo, min=0, max=0):
         except ValueError:
             print('*Tipo de valor inválido')              
 
-def pc_pos_alea():
-    #lista todas as posições disponíveis para o modo jogar
-    lista_pos_val_modo_facil.clear()
-    for posicao in lista_todas_posicoes:
-        if(posicao['ocupada'] == 0):
-                lista_pos_val_modo_facil.append(posicao['id'])
-    #escolhe aleatoriamente uma das posições e joga
-    posicao_escolhida = 0
-    posicao_escolhida = random.choice(lista_pos_val_modo_facil)
-    for posicao in lista_todas_posicoes:
-        if (posicao['id'] == posicao_escolhida):
-            posicao['ocupada'] = 1
-            posicao['simbolo'] = 'O'
-
 def pc_turno():
 
-    #criar verificação dupla que verifica se o jogador pode ganhar em casos onde 
+    """#criar verificação dupla que verifica se o jogador pode ganhar em casos onde 
     # ao tentar bloquear uma combinação a outra vence
     # fazer com que o computador responda forçando o jogador a bloqueá-lo
+
+    id_jog_usu = [] #recebe até 3 jogadas
+    num_jog_usu = 0
+
+    #insere o id das posicoes das 3 primeiras jogadas do jogador
+    for posicao in lista_todas_posicoes:
+        if((posicao['ocupada'] == 1) and (posicao['simbolo'] == 'X')):
+            num_jog_usu += 1
+            if(num_jog_usu < 3):
+                id_jog_usu.append(posicao['id'])"""
 
     while(True):
         global pc_comb_valida
@@ -74,7 +70,18 @@ def pc_turno():
         # altera para o computador jogador aleatoriamente
         if (lista_comb_possiveis == []):
             pc_comb_escolhida = 0
-            pc_pos_alea()
+            #lista todas as posições disponíveis para o modo jogar
+            lista_pos_val_modo_facil.clear()
+            for posicao in lista_todas_posicoes:
+                if(posicao['ocupada'] == 0):
+                        lista_pos_val_modo_facil.append(posicao['id'])
+            #escolhe aleatoriamente uma das posições e joga
+            posicao_escolhida = 0
+            posicao_escolhida = random.choice(lista_pos_val_modo_facil)
+            for posicao in lista_todas_posicoes:
+                if (posicao['id'] == posicao_escolhida):
+                    posicao['ocupada'] = 1
+                    posicao['simbolo'] = 'O'
             break
         else:
             #caso o computador já tenha escolhido uma combinação
@@ -130,17 +137,6 @@ def pc_turno():
                                 posicao['simbolo'] = 'O'
                 break
 
-def pc_modo_dificil():
-    id_jog_usu = [] #recebe até 3 jogadas
-    num_jog_usu = 0
-
-    #insere o id das posicoes das 3 primeiras jogadas do jogador
-    for posicao in lista_todas_posicoes:
-        if((posicao['ocupada'] == 1) and (posicao['simbolo'] == 'X')):
-            num_jog_usu += 1
-            if(num_jog_usu < 3):
-                id_jog_usu.append(posicao['id'])
-
 def pc_comb():
     #limpa combinações possíveis anteriores
     for comb in lista_pc_comb:
@@ -157,7 +153,6 @@ def pc_comb():
                 for pc_comb in lista_pc_comb:
                     if(pc_comb['id'] == id_comb_atual):
                         pc_comb['comb'] += posicao['simbolo']
-    
     #computador considera primeiro as combinações que já ocupou
     #verifica combinações em que o PC já tenha ocupado duas posicões
     comb_ocup_dois = False
@@ -185,6 +180,7 @@ def status_partida():
         [1,4,7],[2,5,8],[3,6,9],#verifica colunas
         [1,5,9],[3,5,7],        #verifica diagonais
         [1,2,3,4,5,6,7,8,9]]    #verifica todas as posicoes
+    #para cada combinação verifica os simbolos ocupados e após verifica status do jogo
     for comb in comb_pos:
         comb_ocup = 0
         comb_feita = ''
@@ -206,12 +202,10 @@ def status_partida():
     return status 
 
 def escolhe_posicao():
-   valido = False
-   #repete a escolha das posicoes conforme retorno true ou false da função "atribui_posicao"
-   while(valido == False):
+   #repete a escolha das posicoes caso a mesma esteja ocupada
+   while(True):
         coluna_escolhida = valida_per(f'{jog_ult_jogada}, escolha uma coluna: ',int,1,3)
         linha_escolhida = valida_per(f'{jog_ult_jogada}, escolha uma linha: ',int,1,3)
-        valido = False
         posicao_ocupada = 0
         for posicao in lista_todas_posicoes:
             if ((posicao['linha'] == linha_escolhida) and (posicao['coluna'] == coluna_escolhida)):
@@ -220,13 +214,12 @@ def escolhe_posicao():
             system('cls')
             menu()
             print('*Posição escolhida está ocupada! Tente novamente\n')
-            valido = False
         else:
             for posicao in lista_todas_posicoes:
                 if ((posicao['linha'] == linha_escolhida) and (posicao['coluna'] == coluna_escolhida)):
                     posicao['ocupada'] = 1
                     posicao['simbolo'] = simbolo_ult_jog
-            valido = True
+            break
 
 def turno_atual(modo_jogo,inicio_partida):
     global jogador_x
@@ -288,27 +281,24 @@ def reseta_partida():
 def menu_final_jogo():
     jogador_vencedor = ''
     pontos_jogador_vencedor = 0
-    dif_empate = False
     system('cls')
     if (jogador_x[0] > jogador_o[0]):
         jogador_vencedor = jogador_x[1]
         pontos_jogador_vencedor = jogador_x[0]
-        dif_empate = True
     elif (jogador_o[0] > jogador_x[0]):
         jogador_vencedor = jogador_o[1]
         pontos_jogador_vencedor = jogador_o[0]
-        dif_empate = True
     else:
         print(f'Partida de Jogo da Velha não teve vencedores!\n')
         print(f'Total de pontos feitos de {jogador_x[1]}: {jogador_x[0]} pontos')
         print(f'Total de pontos feitos de {jogador_o[1]}: {jogador_o[0]} pontos\n')
-    if (dif_empate):
+    if ((jogador_x[0] > jogador_o[0]) or (jogador_o[0] > jogador_x[0])):
         system('cls')
         print(f'Parabéns {jogador_vencedor}!!!\n')
         print(f'Partida de Jogo da Velha foi vencida por {jogador_vencedor}!\n')
         print(f'Total de pontos feitos: {pontos_jogador_vencedor} pontos\n')
     
-def menu_final_rodada():
+def menu_final_partida():
     global jogador_x
     global jogador_o
     resultado = ''
@@ -347,7 +337,6 @@ def menu():
     print('\n')
     
 def main():
-    #programa principal
     system('cls')
     print('|        JOGO DA VELHA        |')
     print('|                             |')
@@ -355,13 +344,12 @@ def main():
     print('| 1 - Jogador x Jogador       |')
     print('| 2 - Jogador x Computador    |\n')
     modo_jogo = valida_per('Escolha um modo de jogo: ','menu',1,2)
-    match modo_jogo:
-        case 1:
-            jogador_x[1] = valida_per('\n| Nome do Jogador que será o X: ',str)
-            jogador_o[1] = valida_per('| Nome do Jogador que será o O: ',str)
-        case 2:
-            jogador_x[1] = valida_per('\n| Nome do Jogador que será o X: ',str)
-            jogador_o[1] = 'Computador'
+    if (modo_jogo == 1):
+        jogador_x[1] = valida_per('\n| Nome do Jogador que será o X: ',str)
+        jogador_o[1] = valida_per('| Nome do Jogador que será o O: ',str)
+    else:
+        jogador_x[1] = valida_per('\n| Nome do Jogador que será o X: ',str)
+        jogador_o[1] = 'Computador'
     while(True):
         system('cls')
         turno_atual(modo_jogo,True)
@@ -371,7 +359,7 @@ def main():
             menu()
             turno_atual(modo_jogo,False)
         #estrutura após a finalização da partida
-        menu_final_rodada()
+        menu_final_partida()
         resetar_partida = valida_per('\nDeseja iniciar uma nova partida ? (1/0): ','menu',0,1)
         if(resetar_partida == 1):
             reseta_partida()
