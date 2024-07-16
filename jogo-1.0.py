@@ -50,6 +50,11 @@ def pc_pos_alea():
             posicao['simbolo'] = 'O'
 
 def pc_turno():
+
+    #criar verificação dupla que verifica se o jogador pode ganhar em casos onde 
+    # ao tentar bloquear uma combinação a outra vence
+    # fazer com que o computador responda forçando o jogador a bloqueá-lo
+
     while(True):
         global pc_comb_valida
         global id_aleatorio_comp_jog
@@ -223,21 +228,30 @@ def escolhe_posicao():
                     posicao['simbolo'] = simbolo_ult_jog
             valido = True
 
-def jogador_turno_atual(modo_jogo):
+def turno_atual(modo_jogo,inicio_partida):
     global jogador_x
     global jogador_o
     global jog_ult_jogada
     global simbolo_ult_jog
     global primeira_jogada
-    global dificuldade_computador
-    #verifica se é a primeira jogada para manter o jogador que foi selecionado pela função "jogador_inicio_partida" 
-    # ou se o modo é "jogador x computador" para sempre começar com o jogador
-    if (primeira_jogada):
-        escolhe_posicao()
-        primeira_jogada = False
-    #modo jogador x jogador - altera o jogador conforme o ultimo que jogou
+    if (inicio_partida):
+        if (modo_jogo == 1):
+            #aleatoriza o jogador que inicia a partida
+            jogadores = [jogador_x[1],jogador_o[1]]
+            simbolos_jogadores = [jogador_x[2],jogador_o[2]]
+            aleatorio = random.randint(0,1)
+            jog_ult_jogada = jogadores[aleatorio]
+            simbolo_ult_jog = simbolos_jogadores[aleatorio]
+        else:
+            jog_ult_jogada = jogador_x[1]
+            simbolo_ult_jog = 'X'
+        input(f'{jog_ult_jogada} inicia a partida!\n\nEnter para iniciar partida')
     else:
-        if ((jog_ult_jogada == jogador_x[1])):
+        if (primeira_jogada):
+            escolhe_posicao()
+            primeira_jogada = False
+        #modo jogador x jogador - altera o jogador conforme o ultimo que jogou
+        elif ((jog_ult_jogada == jogador_x[1])):
             jog_ult_jogada = jogador_o[1]
             simbolo_ult_jog = jogador_o[2]
             #modo jogador x computador - altera o jogador conforme modo
@@ -249,23 +263,6 @@ def jogador_turno_atual(modo_jogo):
             jog_ult_jogada = jogador_x[1]
             simbolo_ult_jog = jogador_x[2]
             escolhe_posicao()
-
-def jogador_inicio_partida(modo_jogo):
-    #aleatoriza o jogador que inicia a partida
-    global jog_ult_jogada
-    global simbolo_ult_jog
-    jogadores = []
-    simbolos_jogadores = []
-    if (modo_jogo == 1):
-        jogadores = [jogador_x[1],jogador_o[1]]
-        simbolos_jogadores = [jogador_x[2],jogador_o[2]]
-        aleatorio = random.randint(0,1)
-        jog_ult_jogada = jogadores[aleatorio]
-        simbolo_ult_jog = simbolos_jogadores[aleatorio]
-    else:
-        jog_ult_jogada = jogador_x[1]
-        simbolo_ult_jog = 'X'
-    print(f'{jog_ult_jogada} inicia a partida!\n')
 
 def reseta_partida():
     global pc_comb_escolhida
@@ -349,6 +346,40 @@ def menu():
         quebra_linha += 1
     print('\n')
     
+def main():
+    #programa principal
+    system('cls')
+    print('|        JOGO DA VELHA        |')
+    print('|                             |')
+    print('|        MODOS DE JOGO        |')
+    print('| 1 - Jogador x Jogador       |')
+    print('| 2 - Jogador x Computador    |\n')
+    modo_jogo = valida_per('Escolha um modo de jogo: ','menu',1,2)
+    match modo_jogo:
+        case 1:
+            jogador_x[1] = valida_per('\n| Nome do Jogador que será o X: ',str)
+            jogador_o[1] = valida_per('| Nome do Jogador que será o O: ',str)
+        case 2:
+            jogador_x[1] = valida_per('\n| Nome do Jogador que será o X: ',str)
+            jogador_o[1] = 'Computador'
+    while(True):
+        system('cls')
+        turno_atual(modo_jogo,True)
+        #estrutura de repetição da jogada
+        while(status_partida() == 0): #repetirá enquanto a partida estiver com status de jogo acontecendo
+            system('cls')
+            menu()
+            turno_atual(modo_jogo,False)
+        #estrutura após a finalização da partida
+        menu_final_rodada()
+        resetar_partida = valida_per('\nDeseja iniciar uma nova partida ? (1/0): ','menu',0,1)
+        if(resetar_partida == 1):
+            reseta_partida()
+            continue
+        else:
+            menu_final_jogo()
+            break
+
 #variáveis de jogadores
 jogador_x = [0,'','X',0] #pontuação, nome, simbolo, vitoria (0 e 1)
 jogador_o = [0,'','O',0]
@@ -388,41 +419,5 @@ lista_todas_posicoes = [
 
 from os import system
 import random
-
-def main():
-    #programa principal
-    system('cls')
-    print('|        JOGO DA VELHA        |')
-    print('|                             |')
-    print('|        MODOS DE JOGO        |')
-    print('| 1 - Jogador x Jogador       |')
-    print('| 2 - Jogador x Computador    |\n')
-    modo_jogo = valida_per('Escolha um modo de jogo: ','menu',1,2)
-    match modo_jogo:
-        case 1:
-            jogador_x[1] = valida_per('\n| Nome do Jogador que será o X: ',str)
-            jogador_o[1] = valida_per('| Nome do Jogador que será o O: ',str)
-        case 2:
-            jogador_x[1] = valida_per('\n| Nome do Jogador que será o X: ',str)
-            jogador_o[1] = 'Computador'
-
-    while(True):
-        system('cls')
-        jogador_inicio_partida(modo_jogo)
-        input('Enter para iniciar partida')
-        #estrutura de repetição da jogada
-        while(status_partida() == 0): #repetirá enquanto a partida estiver com status de jogo acontecendo
-            system('cls')
-            menu()
-            jogador_turno_atual(modo_jogo)
-        #estrutura após a finalização da partida
-        menu_final_rodada()
-        resetar_partida = valida_per('\nDeseja iniciar uma nova partida ? (1/0): ','menu',0,1)
-        if(resetar_partida == 1):
-            reseta_partida()
-            continue
-        else:
-            menu_final_jogo()
-            break
 
 main()
