@@ -183,12 +183,11 @@ def status_partida():
             if(posicao['id'] in ids_comb and posicao['simbolo'] in ('X','O')):
                 comb_feita += posicao['simbolo']
                 comb_ocup += 1
-        if (comb_feita == 'XXX'):
-            jogador_x[3] = 1
-            status = 2
-            return status
-        elif(comb_feita == 'OOO'):
-            jogador_o[3] = 1
+        if (comb_feita in ('XXX','OOO')):
+            if(comb_feita == 'XXX'):
+                jogador_x[3] = 1
+            else:
+                jogador_o[3] = 1
             status = 2
             return status
         elif(comb_ocup == 9):
