@@ -59,9 +59,11 @@ def pc_turno():
             {'id':1,'id_pos':0,'ocupada':0},
             {'id':2,'id_pos':0,'ocupada':0},
             {'id':3,'id_pos':0,'ocupada':0}]
-        lista_comb_possiveis.clear()
-        pc_comb()
+        
+        
         #gera combinações possíveis
+        pc_comb()
+        lista_comb_possiveis.clear()
         for comb in lista_pc_comb:
             if (comb['valido'] == 1):
                 lista_comb_possiveis.append(comb['id'])
@@ -73,7 +75,7 @@ def pc_turno():
             lista_pos_val_modo_alea.clear()
             for posicao in lista_todas_posicoes:
                 if(posicao['ocupada'] == 0):
-                        lista_pos_val_modo_alea.append(posicao['id'])
+                    lista_pos_val_modo_alea.append(posicao['id'])
             #escolhe aleatoriamente uma das posições e joga
             posicao_escolhida = 0
             posicao_escolhida = random.choice(lista_pos_val_modo_alea)
@@ -119,11 +121,10 @@ def pc_turno():
                 for posicao in lista_todas_posicoes:
                     if (posicao['id'] == id_pos):
                         comb_valida += posicao['simbolo']
-                #caso a combinação não possua uma posicao ocupada por si próprio
-                # troca para o modo aleatório
+            #caso a combinação não possua uma posicao ocupada por si próprio
+            # troca para o modo aleatório
             if (comb_valida not in ('O  ',' O ','  O','O O','OO ',' OO','   ')):
                 pc_comb_atual = 0
-                lista_comb_possiveis.clear()
             else:
                 #altera o status ocupada do id da combinação a jogar
                 # depois parte para preencher
@@ -143,11 +144,11 @@ def pc_comb():
         comb['valido'] = 0
     #verifica cada "pos_comb" de "lista_pc_comb" e atribui o simbolo
     # de cada id de posicao de "lista_todas_posicoes"
-    for comb['id'] in lista_pc_comb:
+    for comb in lista_pc_comb:
+        pos_comb = comb['pos_comb']
         for posicao in lista_todas_posicoes:
-            if(posicao['id'] in comb):
-                for comb in lista_pc_comb:
-                    comb['comb'] += posicao['simbolo']
+            if(posicao['id'] in pos_comb):
+                comb['comb'] += posicao['simbolo']
     #computador considera primeiro as combinações que já ocupou
     #verifica combinações em que o PC já tenha ocupado duas posicões
     comb_ocup_dois = False
@@ -303,7 +304,8 @@ def menu():
             print('    |', end='')
         for posicao in lista_todas_posicoes:
             if (posicao['id'] == id):
-                print(f'{posicao['simbolo']}|', end='')
+                print(posicao['simbolo'], end='')
+                print('|', end='')
         if(id in (3,6)):
             print('\r')
     print('\n')
