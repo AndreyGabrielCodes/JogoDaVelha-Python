@@ -52,14 +52,13 @@ def pc_turno():
                 id_jog_usu.append(posicao['id'])"""
 
     while(True):
-        global pc_comb_valida
-        global id_aleatorio_comp_jog
-        global pc_comb_escolhida
+        global pc_id_alea_comb_jog
+        global pc_comb_atual
         #cadastro de preenchimento das posições da combinação escolhida pelo computador
-        lista_preenc_pos_comb_esc = [
-            {'id':1,'pos':0,'ocupada':0},
-            {'id':2,'pos':0,'ocupada':0},
-            {'id':3,'pos':0,'ocupada':0}]
+        lista_ocupa_pos_comb_atual = [
+            {'id':1,'id_pos':0,'ocupada':0},
+            {'id':2,'id_pos':0,'ocupada':0},
+            {'id':3,'id_pos':0,'ocupada':0}]
         lista_comb_possiveis.clear()
         pc_comb()
         #gera combinações possíveis
@@ -69,15 +68,15 @@ def pc_turno():
         #caso todas as combinações estejam indisponíveis
         # altera para o computador jogador aleatoriamente
         if (lista_comb_possiveis == []):
-            pc_comb_escolhida = 0
-            #lista todas as posições disponíveis para o modo jogar
-            lista_pos_val_modo_facil.clear()
+            pc_comb_atual = 0
+            #lista todas as posições disponíveis para o modo aleatório
+            lista_pos_val_modo_alea.clear()
             for posicao in lista_todas_posicoes:
                 if(posicao['ocupada'] == 0):
-                        lista_pos_val_modo_facil.append(posicao['id'])
+                        lista_pos_val_modo_alea.append(posicao['id'])
             #escolhe aleatoriamente uma das posições e joga
             posicao_escolhida = 0
-            posicao_escolhida = random.choice(lista_pos_val_modo_facil)
+            posicao_escolhida = random.choice(lista_pos_val_modo_alea)
             for posicao in lista_todas_posicoes:
                 if (posicao['id'] == posicao_escolhida):
                     posicao['ocupada'] = 1
@@ -86,53 +85,53 @@ def pc_turno():
         else:
             #caso o computador já tenha escolhido uma combinação
             # não é aleatorizado uma nova
-            if (pc_comb_escolhida == 0):
-                pc_comb_escolhida = random.choice(lista_comb_possiveis)
-        
-        if ((pc_comb_escolhida != 0)):
+            if (pc_comb_atual == 0):
+                pc_comb_atual = random.choice(lista_comb_possiveis)
+        #estrutura de escolha da posição de jogada do computador
+        if ((pc_comb_atual != 0)):
             #adiciona os ids das posicoes da combinação escolhida a uma lista de posicoes
             for comb in lista_pc_comb:
-                if (comb['id'] == pc_comb_escolhida):
-                    lista_pc_pos_comb_esc = (comb['pos_comb'])
+                if (comb['id'] == pc_comb_atual):
+                    lista_pc_ids_comb_esc = (comb['pos_comb'])
             #adiciona os ids das posicoes a um cadastro de preenchimento delas
-            x = 0
-            for lista in lista_preenc_pos_comb_esc:
-                if (lista['ocupada'] == 0):
-                    lista['pos'] = lista_pc_pos_comb_esc[x]
-                x +=1
+            id_pos = 0
+            for pos in lista_ocupa_pos_comb_atual:
+                if (pos['ocupada'] == 0):
+                    pos['id_pos'] = lista_pc_ids_comb_esc[id_pos]
+                id_pos +=1
             #Verifica se o id da posicao escolhida está ocupado por ele mesmo 
             # caso esteja o retira das posicoes para jogar da combinação escolhida
-            for lista in lista_preenc_pos_comb_esc:
+            for pos in lista_ocupa_pos_comb_atual:
                 for posicao in lista_todas_posicoes:
-                    if (lista['pos'] == posicao['id']):
+                    if (pos['id_pos'] == posicao['id']):
                         if (posicao['simbolo'] == 'O'):
-                            lista['ocupada'] = 1
+                            pos['ocupada'] = 1
             #verifica os ids a jogar possiveis e aleatoriza um para jogar
-            lista_id_aleatorio = []
-            for lista in lista_preenc_pos_comb_esc:
-                if (lista['ocupada'] == 0):
-                    lista_id_aleatorio.append(lista['pos'])
-            if (lista_id_aleatorio != []):
-                id_aleatorio_comp_jog = random.choice(lista_id_aleatorio)
+            lista_id_alea_comb_jog = []
+            for pos in lista_ocupa_pos_comb_atual:
+                if (pos['ocupada'] == 0):
+                    lista_id_alea_comb_jog.append(pos['id_pos'])
+            if (lista_id_alea_comb_jog != []):
+                pc_id_alea_comb_jog = random.choice(lista_id_alea_comb_jog)
             #verifica se combinação escolhida ainda é válida
             comb_valida = ''
-            for id_pos in lista_pc_pos_comb_esc:
+            for id_pos in lista_pc_ids_comb_esc:
                 for posicao in lista_todas_posicoes:
                     if (posicao['id'] == id_pos):
                         comb_valida += posicao['simbolo']
                 #caso a combinação não possua uma posicao ocupada por si próprio
                 # troca para o modo aleatório
             if (comb_valida not in ('O  ',' O ','  O','O O','OO ',' OO','   ')):
-                pc_comb_escolhida = 0
+                pc_comb_atual = 0
                 lista_comb_possiveis.clear()
             else:
                 #altera o status ocupada do id da combinação a jogar
                 # depois parte para preencher
-                for ocupar in lista_preenc_pos_comb_esc:
-                    if (ocupar['pos'] == id_aleatorio_comp_jog):
-                        ocupar['ocupada'] = 1
+                for pos in lista_ocupa_pos_comb_atual:
+                    if (pos['id_pos'] == pc_id_alea_comb_jog):
+                        pos['ocupada'] = 1
                         for posicao in lista_todas_posicoes:
-                            if (posicao['id'] == id_aleatorio_comp_jog):
+                            if (posicao['id'] == pc_id_alea_comb_jog):
                                 posicao['ocupada'] = 1
                                 posicao['simbolo'] = 'O'
                 break
@@ -144,15 +143,11 @@ def pc_comb():
         comb['valido'] = 0
     #verifica cada "pos_comb" de "lista_pc_comb" e atribui o simbolo
     # de cada id de posicao de "lista_todas_posicoes"
-    for pc_comb in lista_pc_comb:
-        comb_atual = ''
-        comb_atual = pc_comb['pos_comb']
-        id_comb_atual = pc_comb['id']
+    for comb['id'] in lista_pc_comb:
         for posicao in lista_todas_posicoes:
-            if(posicao['id'] in comb_atual):
-                for pc_comb in lista_pc_comb:
-                    if(pc_comb['id'] == id_comb_atual):
-                        pc_comb['comb'] += posicao['simbolo']
+            if(posicao['id'] in comb):
+                for comb in lista_pc_comb:
+                    comb['comb'] += posicao['simbolo']
     #computador considera primeiro as combinações que já ocupou
     #verifica combinações em que o PC já tenha ocupado duas posicões
     comb_ocup_dois = False
@@ -181,11 +176,11 @@ def status_partida():
         [1,5,9],[3,5,7],        #verifica diagonais
         [1,2,3,4,5,6,7,8,9]]    #verifica todas as posicoes
     #para cada combinação verifica os simbolos ocupados e após verifica status do jogo
-    for comb in comb_pos:
+    for ids_comb in comb_pos:
         comb_ocup = 0
         comb_feita = ''
         for posicao in lista_todas_posicoes:
-            if(posicao['id'] in comb and posicao['simbolo'] in ('X','O')):
+            if(posicao['id'] in ids_comb and posicao['simbolo'] in ('X','O')):
                 comb_feita += posicao['simbolo']
                 comb_ocup += 1
         if (comb_feita == 'XXX'):
@@ -204,8 +199,8 @@ def status_partida():
 def escolhe_posicao():
    #repete a escolha das posicoes caso a mesma esteja ocupada
    while(True):
-        coluna_escolhida = valida_per(f'{jog_ult_jogada}, escolha uma coluna: ',int,1,3)
-        linha_escolhida = valida_per(f'{jog_ult_jogada}, escolha uma linha: ',int,1,3)
+        coluna_escolhida = valida_per(f'{ultima_jogada[0]}, escolha uma coluna: ',int,1,3)
+        linha_escolhida = valida_per(f'{ultima_jogada[0]}, escolha uma linha: ',int,1,3)
         posicao_ocupada = 0
         for posicao in lista_todas_posicoes:
             if ((posicao['linha'] == linha_escolhida) and (posicao['coluna'] == coluna_escolhida)):
@@ -218,51 +213,45 @@ def escolhe_posicao():
             for posicao in lista_todas_posicoes:
                 if ((posicao['linha'] == linha_escolhida) and (posicao['coluna'] == coluna_escolhida)):
                     posicao['ocupada'] = 1
-                    posicao['simbolo'] = simbolo_ult_jog
+                    posicao['simbolo'] = ultima_jogada[1]
             break
 
 def turno_atual(modo_jogo,inicio_partida):
     global jogador_x
     global jogador_o
-    global jog_ult_jogada
-    global simbolo_ult_jog
+    global ultima_jogada
     global primeira_jogada
     if (inicio_partida):
         if (modo_jogo == 1):
             #aleatoriza o jogador que inicia a partida
             jogadores = [jogador_x[1],jogador_o[1]]
-            simbolos_jogadores = [jogador_x[2],jogador_o[2]]
+            simbolos_jog = [jogador_x[2],jogador_o[2]]
             aleatorio = random.randint(0,1)
-            jog_ult_jogada = jogadores[aleatorio]
-            simbolo_ult_jog = simbolos_jogadores[aleatorio]
+            ultima_jogada = [jogadores[aleatorio],simbolos_jog[aleatorio]]
         else:
-            jog_ult_jogada = jogador_x[1]
-            simbolo_ult_jog = 'X'
-        input(f'{jog_ult_jogada} inicia a partida!\n\nEnter para iniciar partida')
+            ultima_jogada = [jogador_x[1],'X']
+        input(f'{ultima_jogada[0]} inicia a partida!\n\nEnter para iniciar partida')
     else:
         if (primeira_jogada):
             escolhe_posicao()
             primeira_jogada = False
         #modo jogador x jogador - altera o jogador conforme o ultimo que jogou
-        elif ((jog_ult_jogada == jogador_x[1])):
-            jog_ult_jogada = jogador_o[1]
-            simbolo_ult_jog = jogador_o[2]
+        elif ((ultima_jogada[0] == jogador_x[1])):
+            ultima_jogada = [jogador_o[1],jogador_o[2]]
             #modo jogador x computador - altera o jogador conforme modo
             if (modo_jogo == 1):
                 escolhe_posicao()
             else:
                 pc_turno()
         else:
-            jog_ult_jogada = jogador_x[1]
-            simbolo_ult_jog = jogador_x[2]
+            ultima_jogada = [jogador_x[1],jogador_x[2]]
             escolhe_posicao()
 
 def reseta_partida():
-    global pc_comb_escolhida
-    global pc_comb_valida
-    global id_aleatorio_comp_jog
+    global pc_comb_atual
+    global pc_id_alea_comb_jog
     global primeira_jogada
-    #reseta status de witoria dos jogadores
+    #reseta status de vitoria dos jogadores
     jogador_x[3] = 0
     jogador_o[3] = 0
     #reseta todas as posicoes para valores padrão
@@ -273,30 +262,22 @@ def reseta_partida():
     #reseta variavel padrão de inicio de jogo
     primeira_jogada = True
     #resetar variaveis de controle do computador
-    pc_comb_escolhida = 0
-    pc_comb_valida = False
+    pc_comb_atual = 0
     lista_pc_pos_comb_esc.clear()
-    id_aleatorio_comp_jog = 0
+    pc_id_alea_comb_jog = 0
 
 def menu_final_jogo():
-    jogador_vencedor = ''
-    pontos_jogador_vencedor = 0
     system('cls')
     if (jogador_x[0] > jogador_o[0]):
         jogador_vencedor = jogador_x[1]
-        pontos_jogador_vencedor = jogador_x[0]
     elif (jogador_o[0] > jogador_x[0]):
         jogador_vencedor = jogador_o[1]
-        pontos_jogador_vencedor = jogador_o[0]
-    else:
-        print(f'Partida de Jogo da Velha não teve vencedores!\n')
-        print(f'Total de pontos feitos de {jogador_x[1]}: {jogador_x[0]} pontos')
-        print(f'Total de pontos feitos de {jogador_o[1]}: {jogador_o[0]} pontos\n')
+    if (jogador_x[0] == jogador_o[0]):
+        print(f'| Partida de Jogo da Velha não teve vencedores!\n')
     if ((jogador_x[0] > jogador_o[0]) or (jogador_o[0] > jogador_x[0])):
         system('cls')
-        print(f'Parabéns {jogador_vencedor}!!!\n')
-        print(f'Partida de Jogo da Velha foi vencida por {jogador_vencedor}!\n')
-        print(f'Total de pontos feitos: {pontos_jogador_vencedor} pontos\n')
+        print(f'| Parabéns {jogador_vencedor}! Você venceu!\n')
+    print(f'| Pontuações:\n| - {jogador_x[1]}: {jogador_x[0]}\n| - {jogador_o[1]}: {jogador_o[0]}')
     
 def menu_final_partida():
     global jogador_x
@@ -317,23 +298,15 @@ def menu_final_partida():
     print(f'| Pontuações:\n| - {jogador_x[1]}: {jogador_x[0]}\n| - {jogador_o[1]}: {jogador_o[0]}')
 
 def menu():
-    id_posicao = 1
-    lista_exibe_pos = []
-    for i in range(1,11,1):
-        for posicao in lista_todas_posicoes:
-            if (posicao['id'] == id_posicao):
-                lista_exibe_pos.append(posicao['simbolo'])
-        id_posicao += 1
     print('JOGO DA VELHA 1.0\n Coluna x Linha\n')
-    quebra_linha = 0
-    for simbolo in lista_exibe_pos:
-        if(quebra_linha == 3):
-            quebra_linha = 0
-            print('\r')
-        if(quebra_linha == 0):
+    for id in range(1,10,1):
+        if (id in (1,4,7)):
             print('    |', end='')
-        print(f'{simbolo}|', end='')
-        quebra_linha += 1
+        for posicao in lista_todas_posicoes:
+            if (posicao['id'] == id):
+                print(f'{posicao['simbolo']}|', end='')
+        if(id in (3,6)):
+            print('\r')
     print('\n')
     
 def main():
@@ -372,16 +345,13 @@ def main():
 jogador_x = [0,'','X',0] #pontuação, nome, simbolo, vitoria (0 e 1)
 jogador_o = [0,'','O',0]
 #controles de jogada
-jog_ult_jogada = ''
-simbolo_ult_jog = ''
+ultima_jogada = [] #jogador ultima jogada, simbolo do jogador
 primeira_jogada = True
 #variaveis globais do computador
-pc_comb_escolhida = 0
-pc_comb_valida = False
+pc_comb_atual = 0
+pc_id_alea_comb_jog = 0
 lista_pc_pos_comb_esc = []
-id_aleatorio_comp_jog = 0
-lista_pos_val_modo_facil = []
-dificuldade_computador = 1
+lista_pos_val_modo_alea = []
 lista_comb_possiveis = []
 #cadastro de combinações do computador
 lista_pc_comb = [
