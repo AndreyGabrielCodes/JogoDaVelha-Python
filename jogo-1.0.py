@@ -36,21 +36,6 @@ def valida_per(text_per, tipo, min=0, max=0):
             print('*Tipo de valor inválido')              
 
 def pc_turno():
-
-    """#criar verificação dupla que verifica se o jogador pode ganhar em casos onde 
-    # ao tentar bloquear uma combinação a outra vence
-    # fazer com que o computador responda forçando o jogador a bloqueá-lo
-
-    id_jog_usu = [] #recebe até 3 jogadas
-    num_jog_usu = 0
-
-    #insere o id das posicoes das 3 primeiras jogadas do jogador
-    for posicao in lista_todas_posicoes:
-        if((posicao['ocupada'] == 1) and (posicao['simbolo'] == 'X')):
-            num_jog_usu += 1
-            if(num_jog_usu < 3):
-                id_jog_usu.append(posicao['id'])"""
-
     while(True):
         global pc_id_alea_comb_jog
         global pc_comb_atual
@@ -59,8 +44,10 @@ def pc_turno():
             {'id':1,'id_pos':0,'ocupada':0},
             {'id':2,'id_pos':0,'ocupada':0},
             {'id':3,'id_pos':0,'ocupada':0}]
-        
-        
+        #verifica se o jogador está próximo de completar uma combinação e bloqueia
+        bloq = pc_bloq_jog()
+        if (bloq == True):
+            break
         #gera combinações possíveis
         pc_comb()
         lista_comb_possiveis.clear()
@@ -136,6 +123,35 @@ def pc_turno():
                                 posicao['ocupada'] = 1
                                 posicao['simbolo'] = 'O'
                 break
+
+def pc_bloq_jog():
+    global lista_retorno_pc_comb_jog
+    lista_ids_comb_jog = [[1,3],[4,6],[7,9],[1,7],[2,8],[3,9],[1,9],[3,7],[1,2],[2,3],[4,5],[5,6],
+                          [7,8],[8,9],[1,4],[4,7],[2,5],[5,8],[3,6],[6,9],[1,5],[5,9],[3,5],[5,7]]
+    lista_id_pos_jog = []
+    lista_id_pos_jog_invert = []
+    bloq_feito = False
+    #insere na lista posicoes do jogador 
+    for pos in lista_todas_posicoes:
+        if (pos['simbolo'] == 'X'):
+            lista_id_pos_jog.append(pos['id'])
+    if (lista_id_pos_jog != []):
+        #cria a lista de posições invertidas a partir da primeira então [1,3] vira [3,1]
+        lista_id_pos_jog_invert.append(lista_id_pos_jog[-1])
+        lista_id_pos_jog_invert.append(lista_id_pos_jog[0])
+        #verifica se essas posicoes estão na lista de combinações quase completas
+        for id_comb in lista_ids_comb_jog:
+            if (id_comb == lista_id_pos_jog):
+                #ao encontrar, pesquisa as posicoes do jogador na lista de retorno
+                for id_ret in lista_retorno_pc_comb_jog:       
+                    if((id_ret['id'] == lista_id_pos_jog or id_ret['id'] == lista_id_pos_jog_invert) and (id_ret['bloq'] == 0)):
+                        #quando encontra, insere o bloqueio
+                        for pos in lista_todas_posicoes:
+                            if(pos['id'] == id_ret['ret'] and pos['ocupada'] == 0):
+                                pos['simbolo'] = 'O'
+                                id_ret['bloq'] = 1
+                                bloq_feito = True
+    return bloq_feito
 
 def pc_comb():
     #limpa combinações possíveis anteriores
@@ -265,6 +281,8 @@ def reseta_partida():
     pc_comb_atual = 0
     lista_pc_pos_comb_esc.clear()
     pc_id_alea_comb_jog = 0
+    for bloq in lista_retorno_pc_comb_jog:
+        bloq['bloq'] = 0
 
 def menu_final_jogo():
     system('cls')
@@ -355,6 +373,15 @@ lista_pc_pos_comb_esc = []
 lista_pos_val_modo_alea = []
 lista_comb_possiveis = []
 #cadastro de combinações do computador
+lista_retorno_pc_comb_jog = [
+        {'id':[1,3],'ret':2,'bloq':0},{'id':[4,6],'ret':5,'bloq':0},{'id':[7,9],'ret':8,'bloq':0},
+        {'id':[1,7],'ret':4,'bloq':0},{'id':[2,8],'ret':5,'bloq':0},{'id':[3,9],'ret':6,'bloq':0},
+        {'id':[1,9],'ret':5,'bloq':0},{'id':[3,7],'ret':5,'bloq':0},{'id':[1,2],'ret':3,'bloq':0},
+        {'id':[2,3],'ret':1,'bloq':0},{'id':[4,5],'ret':6,'bloq':0},{'id':[5,6],'ret':4,'bloq':0},
+        {'id':[7,8],'ret':9,'bloq':0},{'id':[8,9],'ret':7,'bloq':0},{'id':[1,4],'ret':7,'bloq':0},
+        {'id':[4,7],'ret':1,'bloq':0},{'id':[2,5],'ret':8,'bloq':0},{'id':[5,8],'ret':2,'bloq':0},
+        {'id':[3,6],'ret':9,'bloq':0},{'id':[6,9],'ret':3,'bloq':0},{'id':[1,5],'ret':9,'bloq':0},
+        {'id':[5,9],'ret':1,'bloq':0},{'id':[3,5],'ret':7,'bloq':0},{'id':[5,7],'ret':3,'bloq':0}]
 lista_pc_comb = [
     {'id':1,'comb':'','valido':0,'pos_comb':[1,2,3]},#pos_comb são os ids das posicoes
     {'id':2,'comb':'','valido':0,'pos_comb':[4,5,6]},
