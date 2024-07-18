@@ -124,16 +124,38 @@ def pc_turno():
 
 def pc_bloq_jog():
     global lista_retorno_pc_comb_jog
+    bloq_feito = False
     lista_ids_comb_jog = [[1,3],[4,6],[7,9],[1,7],[2,8],[3,9],[1,9],[3,7],[1,2],[2,3],[4,5],[5,6],
                           [7,8],[8,9],[1,4],[4,7],[2,5],[5,8],[3,6],[6,9],[1,5],[5,9],[3,5],[5,7]]
     lista_id_pos_jog = []
     lista_id_pos_jog_invert = []
-    bloq_feito = False
-    #insere na lista posicoes do jogador 
+    id_pri_pos_jog = 0 #primeira posição do jogador
+    id_ret_pri_pos = 0 #retorno para a primeira posição
+    #verifica numero de jogadas feitas
+    nro_jogadas = 0
     for pos in lista_todas_posicoes:
-        if (pos['simbolo'] == 'X'):
-            lista_id_pos_jog.append(pos['id'])
-    if (lista_id_pos_jog != []):
+        if (pos['simbolo'] in ('X','O')):
+            nro_jogadas += 1
+        if (nro_jogadas == 1):
+            id_pri_pos_jog = pos['id']
+    if (nro_jogadas == 1):
+        if (id_pri_pos_jog in (1,3,7,9)):
+            id_ret_pri_pos = 5
+        elif (id_pri_pos_jog in (4,5,8)):
+            id_ret_pri_pos = 7
+        elif (id_pri_pos_jog == 2):
+            id_ret_pri_pos = 3
+        else:
+            id_ret_pri_pos = 9
+        for pos in lista_todas_posicoes:
+            if(pos['id'] == id_ret_pri_pos):
+                pos['simbolo'] = 'O'
+        bloq_feito = True
+    elif (nro_jogadas > 0):
+        #insere na lista posicoes do jogador 
+        for pos in lista_todas_posicoes:
+            if (pos['simbolo'] == 'X'):
+                lista_id_pos_jog.append(pos['id'])
         #cria a lista de posições invertidas a partir da primeira então [1,3] vira [3,1]
         lista_id_pos_jog_invert.append(lista_id_pos_jog[-1])
         lista_id_pos_jog_invert.append(lista_id_pos_jog[0])
@@ -233,23 +255,14 @@ def turno_atual(modo_jogo,inicio_partida):
     global jogador_x
     global jogador_o
     global ultima_jogada
-    global primeira_jogada
-    if (inicio_partida):
-        if (modo_jogo == 1):
-            #aleatoriza o jogador que inicia a partida
-            jogadores = [jogador_x[1],jogador_o[1]]
-            simbolos_jog = [jogador_x[2],jogador_o[2]]
-            aleatorio = random.randint(0,1)
-            ultima_jogada = [jogadores[aleatorio],simbolos_jog[aleatorio]]
-        else:
-            ultima_jogada = [jogador_x[1],'X']
-        input(f'{ultima_jogada[0]} inicia a partida!\n\nEnter para iniciar partida')
-    else:
-        if (primeira_jogada):
-            escolhe_posicao()
-            primeira_jogada = False
+    if (inicio_partida): #aleatoriza o jogador que inicia a partida
+        jogadores = [jogador_x[1],jogador_o[1]]
+        simbolos_jog = [jogador_x[2],jogador_o[2]]
+        aleatorio = random.randint(0,1)
+        ultima_jogada = [jogadores[aleatorio],simbolos_jog[aleatorio]]
+    else: #faz a troca de vez entre cada jogador
         #modo jogador x jogador - altera o jogador conforme o ultimo que jogou
-        elif ((ultima_jogada[0] == jogador_x[1])):
+        if ((ultima_jogada[0] == jogador_x[1])):
             ultima_jogada = [jogador_o[1],jogador_o[2]]
             #modo jogador x computador - altera o jogador conforme modo
             if (modo_jogo == 1):
@@ -263,15 +276,13 @@ def turno_atual(modo_jogo,inicio_partida):
 def reseta_partida():
     global pc_comb_atual
     global pc_id_alea_comb_jog
-    global primeira_jogada
+    ultima_jogada.clear()
     #reseta status de vitoria dos jogadores
     jogador_x[3] = 0
     jogador_o[3] = 0
     #reseta todas as posicoes para valores padrão
     for posicao in lista_todas_posicoes:
         posicao['simbolo'] = ' '
-    #reseta variavel padrão de inicio de jogo
-    primeira_jogada = True
     #resetar variaveis de controle do computador
     pc_comb_atual = 0
     lista_pc_pos_comb_esc.clear()
@@ -360,7 +371,6 @@ jogador_x = [0,'','X',0] #pontuação, nome, simbolo, vitoria (0 e 1)
 jogador_o = [0,'','O',0]
 #controles de jogada
 ultima_jogada = [] #jogador ultima jogada, simbolo do jogador
-primeira_jogada = True
 #variaveis globais do computador
 pc_comb_atual = 0
 pc_id_alea_comb_jog = 0
@@ -377,15 +387,11 @@ lista_retorno_pc_comb_jog = [
         {'id':[4,7],'ret':1,'bloq':0},{'id':[2,5],'ret':8,'bloq':0},{'id':[5,8],'ret':2,'bloq':0},
         {'id':[3,6],'ret':9,'bloq':0},{'id':[6,9],'ret':3,'bloq':0},{'id':[1,5],'ret':9,'bloq':0},
         {'id':[5,9],'ret':1,'bloq':0},{'id':[3,5],'ret':7,'bloq':0},{'id':[5,7],'ret':3,'bloq':0}]
-lista_pc_comb = [
-    {'id':1,'comb':'','valido':0,'pos_comb':[1,2,3]},#pos_comb são os ids das posicoes
-    {'id':2,'comb':'','valido':0,'pos_comb':[4,5,6]},
-    {'id':3,'comb':'','valido':0,'pos_comb':[7,8,9]},
-    {'id':4,'comb':'','valido':0,'pos_comb':[1,4,7]},
-    {'id':5,'comb':'','valido':0,'pos_comb':[2,5,8]},
-    {'id':6,'comb':'','valido':0,'pos_comb':[3,6,9]},
-    {'id':7,'comb':'','valido':0,'pos_comb':[1,5,9]},
-    {'id':8,'comb':'','valido':0,'pos_comb':[3,5,7]}]
+lista_pc_comb = [#pos_comb são os ids das posicoes
+    {'id':1,'comb':'','valido':0,'pos_comb':[1,2,3]},{'id':2,'comb':'','valido':0,'pos_comb':[4,5,6]},
+    {'id':3,'comb':'','valido':0,'pos_comb':[7,8,9]},{'id':4,'comb':'','valido':0,'pos_comb':[1,4,7]},
+    {'id':5,'comb':'','valido':0,'pos_comb':[2,5,8]},{'id':6,'comb':'','valido':0,'pos_comb':[3,6,9]},
+    {'id':7,'comb':'','valido':0,'pos_comb':[1,5,9]},{'id':8,'comb':'','valido':0,'pos_comb':[3,5,7]}]
 #cadastro de posicoes
 lista_todas_posicoes = [
     {'simbolo':' ','linha':1,'coluna':1,'id':1}, {'simbolo':' ','linha':1,'coluna':2,'id':2}, 
@@ -396,5 +402,6 @@ lista_todas_posicoes = [
 
 from os import system
 import random
+
 
 main()
