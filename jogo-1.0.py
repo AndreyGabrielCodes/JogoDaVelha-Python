@@ -61,14 +61,13 @@ def pc_turno():
             #lista todas as posições disponíveis para o modo aleatório
             lista_pos_val_modo_alea.clear()
             for posicao in lista_todas_posicoes:
-                if(posicao['ocupada'] == 0):
+                if(posicao['simbolo'] == ' '):
                     lista_pos_val_modo_alea.append(posicao['id'])
             #escolhe aleatoriamente uma das posições e joga
             posicao_escolhida = 0
             posicao_escolhida = random.choice(lista_pos_val_modo_alea)
             for posicao in lista_todas_posicoes:
                 if (posicao['id'] == posicao_escolhida):
-                    posicao['ocupada'] = 1
                     posicao['simbolo'] = 'O'
             break
         else:
@@ -120,7 +119,6 @@ def pc_turno():
                         pos['ocupada'] = 1
                         for posicao in lista_todas_posicoes:
                             if (posicao['id'] == pc_id_alea_comb_jog):
-                                posicao['ocupada'] = 1
                                 posicao['simbolo'] = 'O'
                 break
 
@@ -147,9 +145,8 @@ def pc_bloq_jog():
                     if((id_ret['id'] == lista_id_pos_jog or id_ret['id'] == lista_id_pos_jog_invert) and (id_ret['bloq'] == 0)):
                         #quando encontra, insere o bloqueio
                         for pos in lista_todas_posicoes:
-                            if(pos['id'] == id_ret['ret'] and pos['ocupada'] == 0):
+                            if(pos['id'] == id_ret['ret'] and pos['simbolo'] == ' '):
                                 pos['simbolo'] = 'O'
-                                pos['ocupada'] = 1
                                 id_ret['bloq'] = 1
                                 bloq_feito = True
     return bloq_feito
@@ -218,18 +215,17 @@ def escolhe_posicao():
    while(True):
         coluna_escolhida = valida_per(f'{ultima_jogada[0]}, escolha uma coluna: ',int,1,3)
         linha_escolhida = valida_per(f'{ultima_jogada[0]}, escolha uma linha: ',int,1,3)
-        posicao_ocupada = 0
+        posicao_ocupada = ' '
         for posicao in lista_todas_posicoes:
             if ((posicao['linha'] == linha_escolhida) and (posicao['coluna'] == coluna_escolhida)):
-                posicao_ocupada = posicao['ocupada']
-        if (posicao_ocupada == 1):
+                posicao_ocupada = posicao['simbolo']
+        if (posicao_ocupada in ('X','O')):
             system('cls')
             menu()
             print('*Posição escolhida está ocupada! Tente novamente\n')
         else:
             for posicao in lista_todas_posicoes:
                 if ((posicao['linha'] == linha_escolhida) and (posicao['coluna'] == coluna_escolhida)):
-                    posicao['ocupada'] = 1
                     posicao['simbolo'] = ultima_jogada[1]
             break
 
@@ -273,7 +269,6 @@ def reseta_partida():
     jogador_o[3] = 0
     #reseta todas as posicoes para valores padrão
     for posicao in lista_todas_posicoes:
-        posicao['ocupada'] = 0
         posicao['simbolo'] = ' '
     #reseta variavel padrão de inicio de jogo
     primeira_jogada = True
@@ -393,15 +388,11 @@ lista_pc_comb = [
     {'id':8,'comb':'','valido':0,'pos_comb':[3,5,7]}]
 #cadastro de posicoes
 lista_todas_posicoes = [
-    {'ocupada':0,'simbolo':' ','linha':1,'coluna':1,'id':1}, 
-    {'ocupada':0,'simbolo':' ','linha':1,'coluna':2,'id':2}, 
-    {'ocupada':0,'simbolo':' ','linha':1,'coluna':3,'id':3}, 
-    {'ocupada':0,'simbolo':' ','linha':2,'coluna':1,'id':4}, 
-    {'ocupada':0,'simbolo':' ','linha':2,'coluna':2,'id':5}, 
-    {'ocupada':0,'simbolo':' ','linha':2,'coluna':3,'id':6}, 
-    {'ocupada':0,'simbolo':' ','linha':3,'coluna':1,'id':7}, 
-    {'ocupada':0,'simbolo':' ','linha':3,'coluna':2,'id':8}, 
-    {'ocupada':0,'simbolo':' ','linha':3,'coluna':3,'id':9}]
+    {'simbolo':' ','linha':1,'coluna':1,'id':1}, {'simbolo':' ','linha':1,'coluna':2,'id':2}, 
+    {'simbolo':' ','linha':1,'coluna':3,'id':3}, {'simbolo':' ','linha':2,'coluna':1,'id':4}, 
+    {'simbolo':' ','linha':2,'coluna':2,'id':5}, {'simbolo':' ','linha':2,'coluna':3,'id':6}, 
+    {'simbolo':' ','linha':3,'coluna':1,'id':7}, {'simbolo':' ','linha':3,'coluna':2,'id':8}, 
+    {'simbolo':' ','linha':3,'coluna':3,'id':9}]
 
 from os import system
 import random
