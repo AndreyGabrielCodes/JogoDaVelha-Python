@@ -149,6 +149,7 @@ def pc_bloq_jog():
                         for pos in lista_todas_posicoes:
                             if(pos['id'] == id_ret['ret'] and pos['ocupada'] == 0):
                                 pos['simbolo'] = 'O'
+                                pos['ocupada'] = 1
                                 id_ret['bloq'] = 1
                                 bloq_feito = True
     return bloq_feito
@@ -272,9 +273,8 @@ def reseta_partida():
     jogador_o[3] = 0
     #reseta todas as posicoes para valores padrão
     for posicao in lista_todas_posicoes:
-        if (posicao['ocupada'] == 1):
-            posicao['ocupada'] = 0
-            posicao['simbolo'] = ' '
+        posicao['ocupada'] = 0
+        posicao['simbolo'] = ' '
     #reseta variavel padrão de inicio de jogo
     primeira_jogada = True
     #resetar variaveis de controle do computador
