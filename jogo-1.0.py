@@ -124,26 +124,21 @@ def pc_turno():
 
 def pc_bloq_jog():
     global lista_retorno_pc_comb_jog
+    global lista_duas_ult_pos_jog
+    global num_jog_comp
     bloq_feito = False
     lista_ids_comb_jog = [[1,3],[4,6],[7,9],[1,7],[2,8],[3,9],[1,9],[3,7],[1,2],[2,3],[4,5],[5,6],
                           [7,8],[8,9],[1,4],[4,7],[2,5],[5,8],[3,6],[6,9],[1,5],[5,9],[3,5],[5,7]]
     lista_id_pos_jog = []
     lista_id_pos_jog_invert = []
-    id_pri_pos_jog = 0 #primeira posição do jogador
     id_ret_pri_pos = 0 #retorno para a primeira posição
-    #verifica numero de jogadas feitas
-    nro_jogadas = 0
-    for pos in lista_todas_posicoes:
-        if (pos['simbolo'] in ('X','O')):
-            nro_jogadas += 1
-        if (nro_jogadas == 1):
-            id_pri_pos_jog = pos['id']
-    if (nro_jogadas == 1):
-        if (id_pri_pos_jog in (1,3,7,9)):
+    nro_jogadas_x = len(lista_duas_ult_pos_jog) #verifica numero de jogadas feitas
+    if (nro_jogadas_x == 1 and num_jog_comp == 0):
+        if (lista_duas_ult_pos_jog[0] in (1,3,7,9)):
             id_ret_pri_pos = 5
-        elif (id_pri_pos_jog in (4,5,8)):
+        elif (lista_duas_ult_pos_jog[0] in (4,5,8)):
             id_ret_pri_pos = 7
-        elif (id_pri_pos_jog == 2):
+        elif (lista_duas_ult_pos_jog[0] == 2):
             id_ret_pri_pos = 3
         else:
             id_ret_pri_pos = 9
@@ -151,14 +146,13 @@ def pc_bloq_jog():
             if(pos['id'] == id_ret_pri_pos):
                 pos['simbolo'] = 'O'
         bloq_feito = True
-    elif (nro_jogadas > 0):
-        #insere na lista posicoes do jogador 
-        for pos in lista_todas_posicoes:
-            if (pos['simbolo'] == 'X'):
-                lista_id_pos_jog.append(pos['id'])
+    elif (nro_jogadas_x == 2):
+        #cria lista de posições
+        lista_ids_comb_jog.append(lista_duas_ult_pos_jog[0])
+        lista_ids_comb_jog.append(lista_duas_ult_pos_jog[1])
         #cria a lista de posições invertidas a partir da primeira então [1,3] vira [3,1]
-        lista_id_pos_jog_invert.append(lista_id_pos_jog[-1])
-        lista_id_pos_jog_invert.append(lista_id_pos_jog[0])
+        lista_id_pos_jog_invert.append(lista_ids_comb_jog[-1])
+        lista_id_pos_jog_invert.append(lista_ids_comb_jog[0])
         #verifica se essas posicoes estão na lista de combinações quase completas
         for id_comb in lista_ids_comb_jog:
             if (id_comb == lista_id_pos_jog):
@@ -246,15 +240,25 @@ def escolhe_posicao():
             menu()
             print('*Posição escolhida está ocupada! Tente novamente\n')
         else:
+            id_posicao_inserida = 0
             for posicao in lista_todas_posicoes:
                 if ((posicao['linha'] == linha_escolhida) and (posicao['coluna'] == coluna_escolhida)):
                     posicao['simbolo'] = ultima_jogada[1]
+                    id_posicao_inserida = posicao['id']
+            #cadastra duas ultimas posicoes
+            num_pos = 0
+            for i in lista_duas_ult_pos_jog:
+                num_pos += 1
+            if (num_pos == 2):
+                lista_duas_ult_pos_jog.remove(lista_duas_ult_pos_jog[0])
+            lista_duas_ult_pos_jog.append(id_posicao_inserida)
             break
 
 def turno_atual(modo_jogo,inicio_partida):
     global jogador_x
     global jogador_o
     global ultima_jogada
+    global num_jog_comp
     if (inicio_partida): #aleatoriza o jogador que inicia a partida
         jogadores = [jogador_x[1],jogador_o[1]]
         simbolos_jog = [jogador_x[2],jogador_o[2]]
@@ -269,6 +273,7 @@ def turno_atual(modo_jogo,inicio_partida):
                 escolhe_posicao()
             else:
                 pc_turno()
+                num_jog_comp += 1
         else:
             ultima_jogada = [jogador_x[1],jogador_x[2]]
             escolhe_posicao()
@@ -276,13 +281,14 @@ def turno_atual(modo_jogo,inicio_partida):
 def reseta_partida():
     global pc_comb_atual
     global pc_id_alea_comb_jog
+    #reseta valores da partida
     ultima_jogada.clear()
+    lista_duas_ult_pos_jog.clear()
+    for posicao in lista_todas_posicoes:
+        posicao['simbolo'] = ' '
     #reseta status de vitoria dos jogadores
     jogador_x[3] = 0
     jogador_o[3] = 0
-    #reseta todas as posicoes para valores padrão
-    for posicao in lista_todas_posicoes:
-        posicao['simbolo'] = ' '
     #resetar variaveis de controle do computador
     pc_comb_atual = 0
     lista_pc_pos_comb_esc.clear()
@@ -371,6 +377,8 @@ jogador_x = [0,'','X',0] #pontuação, nome, simbolo, vitoria (0 e 1)
 jogador_o = [0,'','O',0]
 #controles de jogada
 ultima_jogada = [] #jogador ultima jogada, simbolo do jogador
+lista_duas_ult_pos_jog = []
+num_jog_comp = 0
 #variaveis globais do computador
 pc_comb_atual = 0
 pc_id_alea_comb_jog = 0
@@ -402,6 +410,5 @@ lista_todas_posicoes = [
 
 from os import system
 import random
-
 
 main()
