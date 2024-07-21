@@ -124,17 +124,24 @@ def pc_turno():
 
 def pc_bloq_jog():
     global lista_retorno_pc_comb_jog
-    global lista_duas_ult_pos_jog
     global num_jog_comp
+    global ult_id_jog_x
     bloq_feito = False
+    num_jogadas_x = 0
+    id_pri_pos_jog = 0
     id_ret_pri_pos = 0 #retorno para a primeira posição
-    num_jogadas_x = len(lista_duas_ult_pos_jog) #verifica numero de jogadas feitas
+    for pos in lista_todas_posicoes:
+        if (pos['simbolo'] == 'X'):
+            num_jogadas_x +=1
+        if (num_jogadas_x == 1):
+            id_pri_pos_jog = lista_duas_ult_pos_jog[0]
+    #retorno de posições predefinidas a partir da posição inicial do jogador
     if (num_jogadas_x == 1 and num_jog_comp == 0):
-        if (lista_duas_ult_pos_jog[0] in (1,3,7,9)):
+        if (id_pri_pos_jog in (1,3,7,9)):
             id_ret_pri_pos = 5
-        elif (lista_duas_ult_pos_jog[0] in (4,5,8)):
+        elif (id_pri_pos_jog in (4,5,8)):
             id_ret_pri_pos = 7
-        elif (lista_duas_ult_pos_jog[0] == 2):
+        elif (id_pri_pos_jog == 2):
             id_ret_pri_pos = 3
         else:
             id_ret_pri_pos = 9
@@ -152,6 +159,8 @@ def pc_bloq_jog():
                 lista_prepara_pos.append(pos['id'])
                 if (len(lista_prepara_pos) == 2):
                     lista_id_pos_jog.append(lista_prepara_pos[:])
+                    #adiciona as duas ultimas posicoes do jogador para obter mais combinações
+                    lista_id_pos_jog.append(lista_duas_ult_pos_jog) 
                     lista_prepara_pos.remove(lista_prepara_pos[0])
         if (len(lista_id_pos_jog) >= 1):
             #verifica se pares criados estão dentro da lista de retorno
@@ -227,6 +236,7 @@ def status_partida():
     return status 
 
 def escolhe_posicao():
+   global ult_id_jog_x
    #repete a escolha das posicoes caso a mesma esteja ocupada
    while(True):
         coluna_escolhida = valida_per(f'{ultima_jogada[0]}, escolha uma coluna: ',int,1,3)
@@ -284,7 +294,6 @@ def reseta_partida():
     global num_jog_comp
     #reseta valores da partida
     ultima_jogada.clear()
-    lista_duas_ult_pos_jog.clear()
     for posicao in lista_todas_posicoes:
         posicao['simbolo'] = ' '
     #reseta status de vitoria dos jogadores
@@ -314,23 +323,21 @@ def menu_final_jogo():
 def menu_final_partida():
     global jogador_x
     global jogador_o
-    resultado = ''
     system('cls')
     menu()
     if((jogador_x[3] == 0) and (jogador_o[3] == 0)):
-        resultado = ('Empate! Nenhum jogador ganhou')
+        print('| Empate! Nenhum jogador ganhou\n')
     else:
         if (jogador_x[3] == 1):
-            resultado = (f'Vitoria de {jogador_x[1]} que escolheu {jogador_x[2]}!')
+            print(f'| Vitoria de {jogador_x[1]} que escolheu {jogador_x[2]}!\n')
             jogador_x[0] += 1
         else:
-            resultado = (f'Vitoria de {jogador_o[1]} que escolheu {jogador_o[2]}!')
+            print(f'| Vitoria de {jogador_o[1]} que escolheu {jogador_o[2]}!\n')
             jogador_o[0] += 1
-    print(f'| Resultado da partida: {resultado}\n')
     print(f'| Pontuações:\n| - {jogador_x[1]}: {jogador_x[0]}\n| - {jogador_o[1]}: {jogador_o[0]}')
 
 def menu():
-    print('JOGO DA VELHA 1.0\n Coluna x Linha\n')
+    print(' JOGO DA VELHA\n ')
     for id in range(1,10,1):
         if (id in (1,4,7)):
             print('    |', end='')
@@ -340,16 +347,17 @@ def menu():
                 print('|', end='')
         if(id in (3,6)):
             print('\r')
-    print('\n')
+    print('\n\n Coluna x Linha\n')
     
 def main():
     system('cls')
-    print('|        JOGO DA VELHA        |')
-    print('|                             |')
-    print('|        MODOS DE JOGO        |')
-    print('| 1 - Jogador x Jogador       |')
-    print('| 2 - Jogador x Computador    |\n')
-    modo_jogo = valida_per('Escolha um modo de jogo: ','menu',1,2)
+    print('|      JOGO DA VELHA       |')
+    print('| Feito por Andrey Gabriel |')
+    print('|                          |')
+    print('|      MODOS DE JOGO       |')
+    print('| 1 - Jogador x Jogador    |')
+    print('| 2 - Jogador x Computador |\n')
+    modo_jogo = valida_per('| Escolha um modo de jogo: ','menu',1,2)
     if (modo_jogo == 1):
         jogador_x[1] = valida_per('\n| Nome do Jogador que será o X: ',str)
         jogador_o[1] = valida_per('| Nome do Jogador que será o O: ',str)
@@ -366,7 +374,7 @@ def main():
             turno_atual(modo_jogo,False)
         #estrutura após a finalização da partida
         menu_final_partida()
-        resetar_partida = valida_per('\nDeseja iniciar uma nova partida ? (1/0): ','menu',0,1)
+        resetar_partida = valida_per('\n| Deseja iniciar uma nova partida ? (1/0): ','menu',0,1)
         if(resetar_partida == 1):
             reseta_partida()
             continue
@@ -379,10 +387,10 @@ jogador_x = [0,'','X',0] #pontuação, nome, simbolo, vitoria (0 e 1)
 jogador_o = [0,'','O',0]
 #controles de jogada
 ultima_jogada = [] #jogador ultima jogada, simbolo do jogador
-lista_duas_ult_pos_jog = []
-num_jog_comp = 0
 #variaveis globais do computador
+num_jog_comp = 0
 pc_comb_atual = 0
+lista_duas_ult_pos_jog = []
 pc_id_alea_comb_jog = 0
 lista_pc_pos_comb_esc = []
 lista_pos_val_modo_alea = []
