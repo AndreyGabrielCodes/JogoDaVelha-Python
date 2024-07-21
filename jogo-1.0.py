@@ -127,13 +127,12 @@ def pc_bloq_jog():
     global lista_duas_ult_pos_jog
     global num_jog_comp
     bloq_feito = False
-    lista_ids_comb_jog = [[1,3],[4,6],[7,9],[1,7],[2,8],[3,9],[1,9],[3,7],[1,2],[2,3],[4,5],[5,6],
-                          [7,8],[8,9],[1,4],[4,7],[2,5],[5,8],[3,6],[6,9],[1,5],[5,9],[3,5],[5,7]]
-    lista_id_pos_jog = []
-    lista_id_pos_jog_invert = []
+    lista_ids_comb_jog = [[1,5],[5,9],[3,5],[5,7],[1,3],[4,6],[7,9],[1,7],[2,8],[3,9],[1,9],[3,7],
+                          [1,2],[2,3],[4,5],[5,6],[7,8],[8,9],[1,4],[4,7],[2,5],[5,8],[3,6],[6,9],]
+    lista_duas_ult_pos_jog_invert = []
     id_ret_pri_pos = 0 #retorno para a primeira posição
-    nro_jogadas_x = len(lista_duas_ult_pos_jog) #verifica numero de jogadas feitas
-    if (nro_jogadas_x == 1 and num_jog_comp == 0):
+    num_jogadas_x = len(lista_duas_ult_pos_jog) #verifica numero de jogadas feitas
+    if (num_jogadas_x == 1 and num_jog_comp == 0):
         if (lista_duas_ult_pos_jog[0] in (1,3,7,9)):
             id_ret_pri_pos = 5
         elif (lista_duas_ult_pos_jog[0] in (4,5,8)):
@@ -146,19 +145,16 @@ def pc_bloq_jog():
             if(pos['id'] == id_ret_pri_pos):
                 pos['simbolo'] = 'O'
         bloq_feito = True
-    elif (nro_jogadas_x == 2):
-        #cria lista de posições
-        lista_ids_comb_jog.append(lista_duas_ult_pos_jog[0])
-        lista_ids_comb_jog.append(lista_duas_ult_pos_jog[1])
-        #cria a lista de posições invertidas a partir da primeira então [1,3] vira [3,1]
-        lista_id_pos_jog_invert.append(lista_ids_comb_jog[-1])
-        lista_id_pos_jog_invert.append(lista_ids_comb_jog[0])
+    elif (num_jogadas_x >= 2):
+        #cria uma lista com as duas utlimas posicoes invertidas, então [1,3] vira [3,1]
+        lista_duas_ult_pos_jog_invert.append(lista_duas_ult_pos_jog[-1])
+        lista_duas_ult_pos_jog_invert.append(lista_duas_ult_pos_jog[0])
         #verifica se essas posicoes estão na lista de combinações quase completas
         for id_comb in lista_ids_comb_jog:
-            if (id_comb == lista_id_pos_jog):
+            if (id_comb == lista_duas_ult_pos_jog):
                 #ao encontrar, pesquisa as posicoes do jogador na lista de retorno
                 for id_ret in lista_retorno_pc_comb_jog:       
-                    if((id_ret['id'] == lista_id_pos_jog or id_ret['id'] == lista_id_pos_jog_invert) and (id_ret['bloq'] == 0)):
+                    if((id_ret['id'] == lista_duas_ult_pos_jog or id_ret['id'] == lista_duas_ult_pos_jog_invert) and (id_ret['bloq'] == 0)):
                         #quando encontra, insere o bloqueio
                         for pos in lista_todas_posicoes:
                             if(pos['id'] == id_ret['ret'] and pos['simbolo'] == ' '):
@@ -240,18 +236,18 @@ def escolhe_posicao():
             menu()
             print('*Posição escolhida está ocupada! Tente novamente\n')
         else:
-            id_posicao_inserida = 0
+            id_pos_inserida = 0
             for posicao in lista_todas_posicoes:
                 if ((posicao['linha'] == linha_escolhida) and (posicao['coluna'] == coluna_escolhida)):
                     posicao['simbolo'] = ultima_jogada[1]
-                    id_posicao_inserida = posicao['id']
+                    id_pos_inserida = posicao['id']
             #cadastra duas ultimas posicoes
             num_pos = 0
             for i in lista_duas_ult_pos_jog:
                 num_pos += 1
             if (num_pos == 2):
                 lista_duas_ult_pos_jog.remove(lista_duas_ult_pos_jog[0])
-            lista_duas_ult_pos_jog.append(id_posicao_inserida)
+            lista_duas_ult_pos_jog.append(id_pos_inserida)
             break
 
 def turno_atual(modo_jogo,inicio_partida):
@@ -281,6 +277,7 @@ def turno_atual(modo_jogo,inicio_partida):
 def reseta_partida():
     global pc_comb_atual
     global pc_id_alea_comb_jog
+    global num_jog_comp
     #reseta valores da partida
     ultima_jogada.clear()
     lista_duas_ult_pos_jog.clear()
@@ -291,6 +288,7 @@ def reseta_partida():
     jogador_o[3] = 0
     #resetar variaveis de controle do computador
     pc_comb_atual = 0
+    num_jog_comp = 0
     lista_pc_pos_comb_esc.clear()
     pc_id_alea_comb_jog = 0
     for bloq in lista_retorno_pc_comb_jog:
