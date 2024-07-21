@@ -127,9 +127,6 @@ def pc_bloq_jog():
     global lista_duas_ult_pos_jog
     global num_jog_comp
     bloq_feito = False
-    lista_ids_comb_jog = [[1,5],[5,9],[3,5],[5,7],[1,3],[4,6],[7,9],[1,7],[2,8],[3,9],[1,9],[3,7],
-                          [1,2],[2,3],[4,5],[5,6],[7,8],[8,9],[1,4],[4,7],[2,5],[5,8],[3,6],[6,9],]
-    lista_duas_ult_pos_jog_invert = []
     id_ret_pri_pos = 0 #retorno para a primeira posição
     num_jogadas_x = len(lista_duas_ult_pos_jog) #verifica numero de jogadas feitas
     if (num_jogadas_x == 1 and num_jog_comp == 0):
@@ -145,22 +142,29 @@ def pc_bloq_jog():
             if(pos['id'] == id_ret_pri_pos):
                 pos['simbolo'] = 'O'
         bloq_feito = True
+    #bloqueia com base na criação de uma lista de pares de posições jogadas pelo jogador
     elif (num_jogadas_x >= 2):
-        #cria uma lista com as duas utlimas posicoes invertidas, então [1,3] vira [3,1]
-        lista_duas_ult_pos_jog_invert.append(lista_duas_ult_pos_jog[-1])
-        lista_duas_ult_pos_jog_invert.append(lista_duas_ult_pos_jog[0])
-        #verifica se essas posicoes estão na lista de combinações quase completas
-        for id_comb in lista_ids_comb_jog:
-            if (id_comb == lista_duas_ult_pos_jog):
-                #ao encontrar, pesquisa as posicoes do jogador na lista de retorno
-                for id_ret in lista_retorno_pc_comb_jog:       
-                    if((id_ret['id'] == lista_duas_ult_pos_jog or id_ret['id'] == lista_duas_ult_pos_jog_invert) and (id_ret['bloq'] == 0)):
-                        #quando encontra, insere o bloqueio
-                        for pos in lista_todas_posicoes:
-                            if(pos['id'] == id_ret['ret'] and pos['simbolo'] == ' '):
-                                pos['simbolo'] = 'O'
-                                id_ret['bloq'] = 1
-                                bloq_feito = True
+        lista_prepara_pos = []
+        lista_id_pos_jog = []
+        #cria uma lista de pares de jogadas: [[1,2],[2,3],[3,4]]
+        for pos in lista_todas_posicoes:
+            if (pos['simbolo'] == 'X'):
+                lista_prepara_pos.append(pos['id'])
+                if (len(lista_prepara_pos) == 2):
+                    lista_id_pos_jog.append(lista_prepara_pos[:])
+                    lista_prepara_pos.remove(lista_prepara_pos[0])
+        if (len(lista_id_pos_jog) >= 1):
+            #verifica se pares criados estão dentro da lista de retorno
+            for comb in lista_id_pos_jog:
+                if not (bloq_feito):
+                    for id_ret in lista_retorno_pc_comb_jog:       
+                        if((id_ret['id'] == comb) and (id_ret['bloq'] == 0)):
+                            #quando encontra, insere o bloqueio
+                            for pos in lista_todas_posicoes:
+                                if(pos['id'] == id_ret['ret'] and pos['simbolo'] == ' '):
+                                    pos['simbolo'] = 'O'
+                                    id_ret['bloq'] = 1
+                                    bloq_feito = True
     return bloq_feito
 
 def pc_comb():
