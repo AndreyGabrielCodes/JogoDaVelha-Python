@@ -126,9 +126,7 @@ def pc_turno():
                 break
 
 def pc_bloq_jog():
-    global lista_retorno_pc_comb_jog
     global num_jog_comp
-    global ult_id_jog_x
     bloq_feito = False
     num_jogadas_x = 0
     id_pri_pos_jog = 0
@@ -137,53 +135,41 @@ def pc_bloq_jog():
         if (pos['simbolo'] == 'X'):
             num_jogadas_x +=1
         if (num_jogadas_x == 1):
-            id_pri_pos_jog = lista_duas_ult_pos_jog[0]
+            id_pri_pos_jog = pos['id']
     #retorno de posições predefinidas a partir da posição inicial do jogador
     if (num_jogadas_x == 1 and num_jog_comp == 0):
-        if (id_pri_pos_jog in (1,3,7,9)):
-            id_ret_pri_pos = 5
-        elif (id_pri_pos_jog in (4,5,8)):
-            id_ret_pri_pos = 7
-        elif (id_pri_pos_jog == 2):
-            id_ret_pri_pos = 3
-        else:
-            id_ret_pri_pos = 9
-        for pos in lista_todas_posicoes:
+        lista_pri_id_jog = [{'pos':[1,3,7,9],'ret':5},{'pos':[2],'ret':8},{'pos':[8],'ret':2},
+                            {'pos':[4],'ret':6},{'pos':[6],'ret':4},{'pos':[5],'ret':7}]
+        for ids in lista_pri_id_jog: #verifica na lista de retorno o id inicial
+            if (id_pri_pos_jog in ids['pos']):
+                id_ret_pri_pos = ids['ret']
+        for pos in lista_todas_posicoes: #insere o retorno conforme a lista
             if(pos['id'] == id_ret_pri_pos):
                 pos['simbolo'] = 'O'
         bloq_feito = True
     #bloqueia com base na criação de uma lista de pares de posições jogadas pelo jogador
     elif (num_jogadas_x >= 2):
-        lista_prepara_pos = []
-        lista_id_pos_jog = []
-        #cria uma lista de pares de jogadas: [[1,2],[2,3],[3,4]]
-        #cria uma lista com de todas as combinações possíveis
-        lista_todas_comb = []
-        for pos in lista_todas_posicoes:
-            if (pos['simbolo'] == 'X'):
-                lista_prepara_pos.append(pos['id'])
-                if (len(lista_prepara_pos) == 2):
-                    lista_id_pos_jog.append(lista_prepara_pos[:])
-                    #adiciona as duas ultimas posicoes do jogador para obter mais combinações
-                    lista_id_pos_jog.append(lista_duas_ult_pos_jog) 
-                    lista_prepara_pos.remove(lista_prepara_pos[0])
-        
-        """#cria uma lista com de todas as combinações possíveis
+        #cria uma lista com de todas as combinações possíveis com as posições ocupadas por X
         lista_todas_comb = []
         for pos in lista_todas_posicoes:
             if (pos['simbolo'] == 'X'):
                 lista_duas_pos = []
-                lista_duas_pos_invert = []
+                lista_duas_pos_invert = [] #inverte a lista, então [1,2] = [2,1]
                 for i in range(1,10,1):
-                    if (pos['id'] != i):
-                        lista_duas_pos = [pos['id'],i]
-                        lista_duas_pos_invert = [i,pos['id']]
-                        lista_todas_comb.append(lista_duas_pos)
-                        lista_todas_comb.append(lista_duas_pos_invert)
-        if (len(lista_todas_comb) >= 1):"""
-        if (len(lista_id_pos_jog) >= 1):
+                    for j in lista_todas_posicoes: #retira os ids que não sejam iguais a X
+                        if (j['id'] == i):
+                            if (j['simbolo'] == 'X'):
+                                if (pos['id'] != i):
+                                    lista_duas_pos = [pos['id'],i]
+                                    lista_duas_pos_invert = [i,pos['id']]
+                                    #retira as combinações duplicadas
+                                    if (lista_duas_pos not in lista_todas_comb):
+                                        lista_todas_comb.append(lista_duas_pos)
+                                    if (lista_duas_pos_invert not in lista_todas_comb):
+                                        lista_todas_comb.append(lista_duas_pos_invert)
+        if (len(lista_todas_comb) >= 1):
             #verifica se pares criados estão dentro da lista de retorno
-            for comb in lista_id_pos_jog:
+            for comb in lista_todas_comb:
                 if not (bloq_feito):
                     for id_ret in lista_retorno_pc_comb_jog:       
                         if((id_ret['id'] == comb) and (id_ret['bloq'] == 0)):
@@ -256,7 +242,6 @@ def status_partida():
     return status 
 
 def escolhe_posicao():
-   global ult_id_jog_x
    #repete a escolha das posicoes caso a mesma esteja ocupada
    while(True):
         coluna_escolhida = valida_per(f'{ultima_jogada[0]}, escolha uma coluna: ',int,1,3)
@@ -270,18 +255,9 @@ def escolhe_posicao():
             menu()
             print('*Posição escolhida está ocupada! Tente novamente\n')
         else:
-            id_pos_inserida = 0
             for posicao in lista_todas_posicoes:
                 if ((posicao['linha'] == linha_escolhida) and (posicao['coluna'] == coluna_escolhida)):
                     posicao['simbolo'] = ultima_jogada[1]
-                    id_pos_inserida = posicao['id']
-            #cadastra duas ultimas posicoes
-            num_pos = 0
-            for i in lista_duas_ult_pos_jog:
-                num_pos += 1
-            if (num_pos == 2):
-                lista_duas_ult_pos_jog.remove(lista_duas_ult_pos_jog[0])
-            lista_duas_ult_pos_jog.append(id_pos_inserida)
             break
 
 def turno_atual(modo_jogo,inicio_partida):
@@ -320,7 +296,6 @@ def reseta_partida():
     jogador_x[3] = 0
     jogador_o[3] = 0
     #resetar variaveis de controle do computador
-    lista_duas_ult_pos_jog.clear()
     pc_comb_atual = 0
     num_jog_comp = 0
     lista_pc_pos_comb_esc.clear()
@@ -411,34 +386,30 @@ ultima_jogada = [] #jogador ultima jogada, simbolo do jogador
 #variaveis globais do computador
 num_jog_comp = 0
 pc_comb_atual = 0
-lista_duas_ult_pos_jog = []
 pc_id_alea_comb_jog = 0
 lista_pc_pos_comb_esc = []
 lista_pos_val_modo_alea = []
 lista_comb_possiveis = []
 #cadastro de combinações do computador
-lista_retorno_pc_comb_jog = [
-        {'id':[1,3],'ret':2,'bloq':0},{'id':[4,6],'ret':5,'bloq':0},{'id':[7,9],'ret':8,'bloq':0},
-        {'id':[1,7],'ret':4,'bloq':0},{'id':[2,8],'ret':5,'bloq':0},{'id':[3,9],'ret':6,'bloq':0},
-        {'id':[1,9],'ret':5,'bloq':0},{'id':[3,7],'ret':5,'bloq':0},{'id':[1,2],'ret':3,'bloq':0},
-        {'id':[2,3],'ret':1,'bloq':0},{'id':[4,5],'ret':6,'bloq':0},{'id':[5,6],'ret':4,'bloq':0},
-        {'id':[7,8],'ret':9,'bloq':0},{'id':[8,9],'ret':7,'bloq':0},{'id':[1,4],'ret':7,'bloq':0},
-        {'id':[4,7],'ret':1,'bloq':0},{'id':[2,5],'ret':8,'bloq':0},{'id':[5,8],'ret':2,'bloq':0},
-        {'id':[3,6],'ret':9,'bloq':0},{'id':[6,9],'ret':3,'bloq':0},{'id':[1,5],'ret':9,'bloq':0},
-        {'id':[5,9],'ret':1,'bloq':0},{'id':[3,5],'ret':7,'bloq':0},{'id':[5,7],'ret':3,'bloq':0}]
+lista_retorno_pc_comb_jog = [{'id':[1,3],'ret':2,'bloq':0},{'id':[4,6],'ret':5,'bloq':0},{'id':[7,9],'ret':8,'bloq':0},
+                             {'id':[1,7],'ret':4,'bloq':0},{'id':[2,8],'ret':5,'bloq':0},{'id':[3,9],'ret':6,'bloq':0},
+                             {'id':[1,9],'ret':5,'bloq':0},{'id':[3,7],'ret':5,'bloq':0},{'id':[1,2],'ret':3,'bloq':0},
+                             {'id':[2,3],'ret':1,'bloq':0},{'id':[4,5],'ret':6,'bloq':0},{'id':[5,6],'ret':4,'bloq':0},
+                             {'id':[7,8],'ret':9,'bloq':0},{'id':[8,9],'ret':7,'bloq':0},{'id':[1,4],'ret':7,'bloq':0},
+                             {'id':[4,7],'ret':1,'bloq':0},{'id':[2,5],'ret':8,'bloq':0},{'id':[5,8],'ret':2,'bloq':0},
+                             {'id':[3,6],'ret':9,'bloq':0},{'id':[6,9],'ret':3,'bloq':0},{'id':[1,5],'ret':9,'bloq':0},
+                             {'id':[5,9],'ret':1,'bloq':0},{'id':[3,5],'ret':7,'bloq':0},{'id':[5,7],'ret':3,'bloq':0}]
 #pos_comb são os ids das posicoes
-lista_pc_comb = [
-    {'id':1,'comb':'','valido':0,'pos_comb':[1,2,3]},{'id':2,'comb':'','valido':0,'pos_comb':[4,5,6]},
-    {'id':3,'comb':'','valido':0,'pos_comb':[7,8,9]},{'id':4,'comb':'','valido':0,'pos_comb':[1,4,7]},
-    {'id':5,'comb':'','valido':0,'pos_comb':[2,5,8]},{'id':6,'comb':'','valido':0,'pos_comb':[3,6,9]},
-    {'id':7,'comb':'','valido':0,'pos_comb':[1,5,9]},{'id':8,'comb':'','valido':0,'pos_comb':[3,5,7]}]
+lista_pc_comb = [{'id':1,'comb':'','valido':0,'pos_comb':[1,2,3]},{'id':2,'comb':'','valido':0,'pos_comb':[4,5,6]},
+                 {'id':3,'comb':'','valido':0,'pos_comb':[7,8,9]},{'id':4,'comb':'','valido':0,'pos_comb':[1,4,7]},
+                 {'id':5,'comb':'','valido':0,'pos_comb':[2,5,8]},{'id':6,'comb':'','valido':0,'pos_comb':[3,6,9]},
+                 {'id':7,'comb':'','valido':0,'pos_comb':[1,5,9]},{'id':8,'comb':'','valido':0,'pos_comb':[3,5,7]}]
 #cadastro de posicoes
-lista_todas_posicoes = [
-    {'simbolo':' ','linha':1,'coluna':1,'id':1}, {'simbolo':' ','linha':1,'coluna':2,'id':2}, 
-    {'simbolo':' ','linha':1,'coluna':3,'id':3}, {'simbolo':' ','linha':2,'coluna':1,'id':4}, 
-    {'simbolo':' ','linha':2,'coluna':2,'id':5}, {'simbolo':' ','linha':2,'coluna':3,'id':6}, 
-    {'simbolo':' ','linha':3,'coluna':1,'id':7}, {'simbolo':' ','linha':3,'coluna':2,'id':8}, 
-    {'simbolo':' ','linha':3,'coluna':3,'id':9}]
+lista_todas_posicoes = [{'simbolo':' ','linha':1,'coluna':1,'id':1}, {'simbolo':' ','linha':1,'coluna':2,'id':2}, 
+                        {'simbolo':' ','linha':1,'coluna':3,'id':3}, {'simbolo':' ','linha':2,'coluna':1,'id':4}, 
+                        {'simbolo':' ','linha':2,'coluna':2,'id':5}, {'simbolo':' ','linha':2,'coluna':3,'id':6}, 
+                        {'simbolo':' ','linha':3,'coluna':1,'id':7}, {'simbolo':' ','linha':3,'coluna':2,'id':8}, 
+                        {'simbolo':' ','linha':3,'coluna':3,'id':9}]
 
 from os import system
 import random
