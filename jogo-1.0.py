@@ -44,10 +44,13 @@ def pc_turno():
             {'id':1,'id_pos':0,'ocupada':0},
             {'id':2,'id_pos':0,'ocupada':0},
             {'id':3,'id_pos':0,'ocupada':0}]
-        #verifica se o jogador está próximo de completar uma combinação e bloqueia
-        bloq = pc_bloq_jog()
-        if (bloq == True):
-            break
+        #computador primeiro verifica se está proximo de completar uma combinação caso não esteja
+        # verifica se o jogador está proximo de completar uma combinação e o bloqueia
+        duas_pos_pc_comb = pc_comb()
+        if not duas_pos_pc_comb:
+            bloq = pc_bloq_jog()
+            if (bloq == True):
+                break
         #gera combinações possíveis
         pc_comb()
         lista_comb_possiveis.clear()
@@ -154,6 +157,8 @@ def pc_bloq_jog():
         lista_prepara_pos = []
         lista_id_pos_jog = []
         #cria uma lista de pares de jogadas: [[1,2],[2,3],[3,4]]
+        #cria uma lista com de todas as combinações possíveis
+        lista_todas_comb = []
         for pos in lista_todas_posicoes:
             if (pos['simbolo'] == 'X'):
                 lista_prepara_pos.append(pos['id'])
@@ -162,6 +167,20 @@ def pc_bloq_jog():
                     #adiciona as duas ultimas posicoes do jogador para obter mais combinações
                     lista_id_pos_jog.append(lista_duas_ult_pos_jog) 
                     lista_prepara_pos.remove(lista_prepara_pos[0])
+        
+        """#cria uma lista com de todas as combinações possíveis
+        lista_todas_comb = []
+        for pos in lista_todas_posicoes:
+            if (pos['simbolo'] == 'X'):
+                lista_duas_pos = []
+                lista_duas_pos_invert = []
+                for i in range(1,10,1):
+                    if (pos['id'] != i):
+                        lista_duas_pos = [pos['id'],i]
+                        lista_duas_pos_invert = [i,pos['id']]
+                        lista_todas_comb.append(lista_duas_pos)
+                        lista_todas_comb.append(lista_duas_pos_invert)
+        if (len(lista_todas_comb) >= 1):"""
         if (len(lista_id_pos_jog) >= 1):
             #verifica se pares criados estão dentro da lista de retorno
             for comb in lista_id_pos_jog:
@@ -207,6 +226,7 @@ def pc_comb():
         for comb in lista_pc_comb:
             if(comb['comb'] in ('   ')):
                 comb['valido'] = 1
+    return comb_ocup_dois
 
 def status_partida():
     status = 0 #status: 0 - jogo acontecendo | 1 - empate | 2 - vitória
@@ -300,6 +320,7 @@ def reseta_partida():
     jogador_x[3] = 0
     jogador_o[3] = 0
     #resetar variaveis de controle do computador
+    lista_duas_ult_pos_jog.clear()
     pc_comb_atual = 0
     num_jog_comp = 0
     lista_pc_pos_comb_esc.clear()
@@ -405,7 +426,8 @@ lista_retorno_pc_comb_jog = [
         {'id':[4,7],'ret':1,'bloq':0},{'id':[2,5],'ret':8,'bloq':0},{'id':[5,8],'ret':2,'bloq':0},
         {'id':[3,6],'ret':9,'bloq':0},{'id':[6,9],'ret':3,'bloq':0},{'id':[1,5],'ret':9,'bloq':0},
         {'id':[5,9],'ret':1,'bloq':0},{'id':[3,5],'ret':7,'bloq':0},{'id':[5,7],'ret':3,'bloq':0}]
-lista_pc_comb = [#pos_comb são os ids das posicoes
+#pos_comb são os ids das posicoes
+lista_pc_comb = [
     {'id':1,'comb':'','valido':0,'pos_comb':[1,2,3]},{'id':2,'comb':'','valido':0,'pos_comb':[4,5,6]},
     {'id':3,'comb':'','valido':0,'pos_comb':[7,8,9]},{'id':4,'comb':'','valido':0,'pos_comb':[1,4,7]},
     {'id':5,'comb':'','valido':0,'pos_comb':[2,5,8]},{'id':6,'comb':'','valido':0,'pos_comb':[3,6,9]},
